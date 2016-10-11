@@ -89,7 +89,7 @@ define(function(require){
       if(Origin.location.module !== 'editor') {
         return {};
       }
-      var contentTypes = [ 'component', 'block', 'article', 'page' ];
+      var contentTypes = [ 'component', 'block', 'article', 'contentobject' ];
       var contentCollections = [ 'components', 'blocks', 'articles', 'contentObjects' ];
 
       var workspaces = { course: [ Origin.location.route1 ] };
@@ -204,12 +204,14 @@ define(function(require){
     },
 
     onDrag: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
+      e && e.preventDefault();
+      e && e.stopPropagation();
       this.$('label[for=file]').addClass('over');
     },
 
     onDrop: function(e) {
-      e && e.preventDefault() && e.stopPropagation();
+      e && e.preventDefault();
+      e && e.stopPropagation();
       this.$('label[for=file]').removeClass('over');
       if(e.type === 'drop') {
         var files = e.originalEvent.dataTransfer.files;
