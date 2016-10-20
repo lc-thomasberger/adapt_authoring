@@ -6,9 +6,7 @@ define(function(require) {
   var UserModel = require('./userModel');
 
   // TODO link to file once user mangagement is merged
-  var UserCollection = Backbone.Collection.extend({
-    url: '/api/user'
-  });
+  var UserCollection = Backbone.Collection.extend({ url: '/api/user' });
 
   var SessionModel = Backbone.Model.extend({
     url: "/api/authcheck",
@@ -23,33 +21,42 @@ define(function(require) {
       user: null
     },
 
-    events: {
-      'change:users': this.setCurrentUser
-    },
+    fetch: function(options) {
+      var self = this;
+      // hijack success callback
+      options = options || {};
+      var successCb = options.success;
+      options.success = function() {
+        // keep existing 'this' scope
+        if(successCb) successCb.call(this);
 
-    initialize: function() {
-      this.set('users', new UserCollection());
-      Origin.on('origin:initialize login:changed', _.bind(function() {
-        this.get('users').fetch({
-          success: _.bind(function(collection) {
-            this.set('users', collection);
-            this.setCurrentUser();
-          }, this)
-        });
-      }, this));
-    },
+        if(!self.get('user') && self.get('id')) {
+          self.set('user', new UserModel({ _id: self.get('id') }));
+        }
+        if(self.get('user')) {
+          self.get('user').fetch({
+            success: function() {
+              Origin.trigger('user:updated');
+              // get users
+              if(Origin.permissions.hasPermissions(self.get('permissions'))){
+                var users = new UserCollection();
+                users.fetch({
+                  success: _.bind(function(collection) {
+                    self.set('users', users);
+                    Origin.trigger('sessionModel:initialised');
+                  }, this)
+                });
+              } else {
+                Origin.trigger('sessionModel:initialised');
+              }
+            }
+          });
+        } else {
+          Origin.trigger('sessionModel:initialised');
+        }
+      };
 
-    setCurrentUser: function() {
-      if(this.get('user') && this.get('user').get('_id') === this.get('id')) {
-        this.get('user').fetch({
-          success: function() { Origin.trigger('user:updated'); }
-        });
-      } else {
-        if(this.get('users').length === 0) return; // not ready
-        var user = this.get('users').findWhere({ _id: this.get('id') });
-        this.set('user', user);
-        Origin.trigger('user:updated');
-      }
+      Backbone.Model.prototype.fetch.call(this, options);
     },
 
     logout: function () {
@@ -66,22 +73,23 @@ define(function(require) {
         url: '/api/login',
         data: { email:username, password:password, shouldPersist:shouldPersist },
         success: _.bind(function (jqXHR, textStatus, errorThrown) {
-          if (jqXHR.success) {
-            this.set({
-              id: jqXHR.id,
-              tenantId: jqXHR.tenantId,
-              email: jqXHR.email,
-              isAuthenticated: jqXHR.success,
-              permissions: jqXHR.permissions
-            });
-
-            this.get('users').fetch();
-
-            Origin.trigger('login:changed');
-            Origin.trigger('schemas:loadData', function() {
-              Origin.router.navigate('#/dashboard', { trigger: true });
-            });
-          }
+          this.fetch({
+            success: _.bind(function() {
+              if (jqXHR.success) {
+                this.set({
+                  id: jqXHR.id,
+                  tenantId: jqXHR.tenantId,
+                  email: jqXHR.email,
+                  isAuthenticated: jqXHR.success,
+                  permissions: jqXHR.permissions
+                });
+                Origin.trigger('login:changed');
+                Origin.trigger('schemas:loadData', function() {
+                  Origin.router.navigate('#/dashboard', { trigger: true });
+                });
+              }
+            }, this)
+          });
         },this),
         error: function (jqXHR, textStatus, errorThrown) {
           var errorCode = 1;
