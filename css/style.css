@@ -1,0 +1,112 @@
+body {
+  font-family: 'Raleway', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  padding: 25px 0;
+  margin: 0;
+  margin-top: 25px;
+  margin-bottom: 150px;
+  background-image: url('../assets/bg.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+}
+h2 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 300;
+}
+h3 {
+  font-weight: 300;
+}
+li {
+  margin-bottom: 15px;
+}
+
+.navigation {
+  margin: 50px 0;
+  text-align: center;
+}
+.collection {
+  padding: 0 10px;
+  display: inline-block;
+  color: white;
+}
+.collection .inner {
+  border-top: 1px solid white;
+}
+a.button {
+  display: inline-block;
+  padding: 15px;
+  cursor: pointer;
+  border: 1px solid white;
+  text-align: center;
+  margin-top: 10px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: 0.5s;
+}
+a.button:hover {
+  color: #34a9d4;
+  background-color: white;
+}
+
+.quicknav {
+  float: left;
+  color: white;
+  display: none;
+}
+
+.header {
+  text-align: center;
+  width: 75%;
+  margin: 0 auto;
+  margin-top: 10px;
+  margin-bottom: 50px;
+  color: white;
+  font-size: 18px;
+}
+
+.header img {
+  display: block;
+  margin: 0 auto;
+}
+
+.header .logo-main {
+  display: none;
+}
+.header .logo-sub {
+  width: 400px;
+  margin-bottom: 60px;
+}
+
+.header h1 {
+  font-size: 50px;
+  font-weight: 300;
+}
+
+.content {
+  box-shadow: 0 -25px 40px 0 rgba(0,0,0,0.12);
+  background-color: white;
+}
+
+.section {
+  padding: 75px;
+  padding-top: 50px;
+  background-color: white;
+}
+.section.blue {
+  background-color: #36cde8;
+  color: white;
+}
+.section.green {
+  background-color: #00dd97;
+  color: white;
+}
+.section.dark {
+  background-color: #263944;
+  color: #abbcc5;
+}
+.section.centre {
+  text-align: center;
+}
