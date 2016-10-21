@@ -1,0 +1,596 @@
+[
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2bf4d399cb800541573fa",
+    "_layout": "right",
+    "_parentId": "57e2be69399cb800541573f8",
+    "_type": "component",
+    "body": "",
+    "displayTitle": "",
+    "title": "Component title",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "graphic",
+    "_graphic": {
+      "attribution": "",
+      "small": "course/en/assets/bb030ee3a6fddd6b33722efb56c7f0cb503ce049.jpg",
+      "large": "course/en/assets/bb030ee3a6fddd6b33722efb56c7f0cb503ce049.jpg",
+      "alt": ""
+    },
+    "instruction": ""
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2bf47399cb800541573f9",
+    "_layout": "left",
+    "_parentId": "57e2be69399cb800541573f8",
+    "_type": "component",
+    "body": "<p>Adapt allows you to combine text and graphic components on the scrolling page to create rich and varied learning experiences. In addition, a wide range of interactive components are also available to help encourage deeper engagement with the material.</p>\n\n<p>&nbsp;</p>\n\n<p>These presentation components can be structured in any way to help you create learning experiences that meet the needs of your learners.</p>\n",
+    "displayTitle": "Text & Graphic",
+    "title": "Text & Graphic",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "text",
+    "instruction": "Scroll down to see what presentation components are available as part of the Version 2.0 core bundle."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c03f399cb80054157404",
+    "_layout": "full",
+    "_parentId": "57e2c02d399cb80054157403",
+    "_type": "component",
+    "body": "<p>The narrative component lets you scroll through a series of images each with some accompanying text.</p>\n\n<p>This component is always spanned.</p>\n",
+    "displayTitle": "Narrative",
+    "title": "Narrative",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "narrative",
+    "_items": [
+      {
+        "strapline": "Narrative item 1",
+        "_graphic": {
+          "alt": "",
+          "src": "course/en/assets/cdb4ccf21cd7a784931f4575b689a701111e064a.jpg"
+        },
+        "body": "<p>Narratives are particularly good for showing dialogue between two or more characters, with each step of the conversation being accompanied by an image. This photo story approach can be used to provide context for the learning about to follow, to illustrate real world application of the learning or to show the impact on people when the learning hasn&rsquo;t been applied correctly.</p>\n",
+        "title": "Narrative item 1"
+      },
+      {
+        "strapline": "Narrative item 2",
+        "_graphic": {
+          "alt": "",
+          "src": "course/en/assets/4b1e70f746d15ea3aa337b026a0d31b98e82d4ad.jpg"
+        },
+        "body": "<p>Narratives can also be used to present case studies, where the different displays are used to set the scene, show the key events and then the outcome.</p>\n",
+        "title": "Narrative item 2"
+      },
+      {
+        "strapline": "Narrative item 3",
+        "_graphic": {
+          "alt": "",
+          "src": "course/en/assets/4ea0168c950a6d927c932057879721ea4c3171eb.png"
+        },
+        "body": "<p>The narrative can also be used when you want to illustrate the constituent steps that make up a larger process.</p>\n",
+        "title": "Narrative item 3"
+      }
+    ],
+    "_setCompletionOn": "allItems",
+    "_hasNavigationInTextArea": true,
+    "mobileInstruction": "Select the arrow to find out more.",
+    "instruction": "Select the arrow to find out more."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c348399cb8005415740a",
+    "_layout": "full",
+    "_parentId": "57e2c343399cb80054157409",
+    "_type": "component",
+    "body": "<p>You can add interactivity to an image by using the&nbsp;hot graphic. This component allows you to position icons over an image. When an icon is selected, content associated with its corresponding location is displayed in a window over the image. This component will fall back to a&nbsp;narrative&nbsp;when viewed on mobile.</p>\n",
+    "displayTitle": "Hot Graphic",
+    "title": "Hot Graphic",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "hotgraphic",
+    "_items": [
+      {
+        "_top": 42,
+        "_left": 8.5,
+        "_classes": "",
+        "_graphic": {
+          "_classes": "",
+          "title": "",
+          "alt": "",
+          "src": "course/en/assets/38ef3c2fc6944c2c140ea0a81020af2d6c773ba6.jpg"
+        },
+        "strapline": "Hot graphic item 1",
+        "body": "<p>This is display text 1 which we have associated with the tablet image on the desktop.</p>\n",
+        "title": "Hot graphic item 1"
+      },
+      {
+        "_top": 62,
+        "_left": 26.5,
+        "_classes": "",
+        "_graphic": {
+          "_classes": "",
+          "title": "",
+          "alt": "",
+          "src": "course/en/assets/cdb4ccf21cd7a784931f4575b689a701111e064a.jpg"
+        },
+        "strapline": "Hot graphic item 2",
+        "body": "<p>This is display text 2 which we have linked to the smartphone image.</p>\n",
+        "title": "Hot graphic item 2"
+      },
+      {
+        "_top": 62,
+        "_left": 49,
+        "_classes": "",
+        "_graphic": {
+          "_classes": "",
+          "title": "",
+          "alt": "",
+          "src": "course/en/assets/bb030ee3a6fddd6b33722efb56c7f0cb503ce049.jpg"
+        },
+        "strapline": "Hot graphic item 3",
+        "body": "<p>This is display text 3 which we&rsquo;ve located over the laptop so you would expect the content to be about PCs.</p>\n",
+        "title": "Hot graphic item 3"
+      }
+    ],
+    "_useGraphicsAsPins": false,
+    "_canCycleThroughPagination": false,
+    "_hidePagination": false,
+    "mobileInstruction": "<p>Select the icons to find out more.</p>\n",
+    "mobileBody": "<p>You can add interactivity to an image by using the&nbsp;hot graphic. This component allows you to position icons over an image. When an icon is selected, content associated with its corresponding location is displayed in a window over the image. This component will fall back to a&nbsp;narrative&nbsp;when viewed on mobile.</p>\n",
+    "_graphic": {
+      "alt": "",
+      "src": "course/en/assets/2131bbcfaa76e867ce8122b7ee2d8635fa1ad3f5.jpg"
+    },
+    "instruction": "Select the icons to find out more."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c53d399cb80054157413",
+    "_layout": "full",
+    "_parentId": "57e2c333399cb80054157408",
+    "_type": "component",
+    "body": "<p>Sometimes we need to make use of rich media to really drive home a point, bring a complex subject to life or just let audio to literally do the talking. This is when the media component comes to the fore.</p>\n\n<p>Component can be either single or spanned.</p>\n",
+    "displayTitle": "Media",
+    "title": "Media",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "media",
+    "_playerOptions": "",
+    "_transcript": {
+      "transcriptLink": "",
+      "transcriptLinkButton": "",
+      "inlineTranscriptBody": "<p>This is transcript text for a YouTube video.</p>\n",
+      "inlineTranscriptCloseButton": "Close Transcript",
+      "inlineTranscriptButton": "Open Transcript",
+      "_externalTranscript": false,
+      "_inlineTranscript": true,
+      "_setCompletionOnView": true
+    },
+    "_allowFullScreen": false,
+    "_startLanguage": "en",
+    "_useClosedCaptions": false,
+    "_setCompletionOn": "play",
+    "_media": {
+      "cc": [],
+      "poster": "",
+      "type": "video/youtube",
+      "source": "https://www.youtube.com/watch?v=6qzOMCIlzt4",
+      "mp3": "",
+      "ogv": "",
+      "mp4": ""
+    },
+    "instruction": "Select the play button to start the video."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c5af399cb80054157415",
+    "_layout": "full",
+    "_parentId": "57e2c5ac399cb80054157414",
+    "_type": "component",
+    "body": "<p>You can use the accordion component to present learners with a series of headings, which once selected, expand to reveal associated text. Select each of the headings below to find out more about how accordions can be used.</p>\n\n<p>These components can be either single or spanned. If spanned they can also contain a graphic.</p>\n",
+    "displayTitle": "Accordion",
+    "title": "Accordion",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "accordion",
+    "_items": [
+      {
+        "_classes": "",
+        "_graphic": {
+          "src": "",
+          "alt": ""
+        },
+        "body": "<p>This is display text 1 and we&rsquo;re using it to discuss lists.</p>\n\n<p>If you need to present a list which can standalone as a piece of content, but which can also be explored in more detail, then accordions are a great choice.</p>\n",
+        "title": "Lists"
+      },
+      {
+        "_classes": "",
+        "_graphic": {
+          "src": "",
+          "alt": ""
+        },
+        "body": "<p>This is display text 2 and now we&rsquo;re discussing how accordions can be great at presenting a process.</p>\n\n<p>The headings can be used to present the high level stages in the process which once selected, provide a more extensive explanation of what happens at that specific point.</p>\n",
+        "title": "Steps in a process"
+      },
+      {
+        "_classes": "",
+        "_graphic": {
+          "src": "",
+          "alt": ""
+        },
+        "body": "<p>This is display text 3 and we&rsquo;re now talking about using accordions to provide the learner with a summary.</p>\n\n<p>Each accordion item corresponds to a key piece of learning presented on the page. When this item is selected a short summary of the learning point is provided.</p>\n",
+        "title": "Recaps"
+      }
+    ],
+    "instruction": "Select the headings to find out more."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c917399cb8005415741a",
+    "_layout": "full",
+    "_parentId": "57e2c81e399cb80054157419",
+    "_type": "component",
+    "body": "<p>We can&rsquo;t easily measure whether learners are meeting the intended course objectives, provide guidance and feedback if they&rsquo;re not or give them opportunities to practice and rehearse in a &lsquo;safe environment&rsquo; without a range of question components.<br />\n<br />\nDiscover what question components are available within the framework, along with some tips on how to use them.</p>\n",
+    "displayTitle": "",
+    "title": "Component title",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "text",
+    "instruction": "Scroll down to see what question components are available as part of the Version 2.0 core bundle."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2c93d399cb8005415741c",
+    "_layout": "left",
+    "_parentId": "57e2c938399cb8005415741b",
+    "_type": "component",
+    "body": "<p>In what year was the first recorded instance of a large scale assessment that consists solely of multiple choice questions?</p>\n",
+    "displayTitle": "Multiple Choice Question",
+    "title": "Multiple Choice Question",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "mcq",
+    "_buttons": {
+      "remainingAttemptText": "",
+      "remainingAttemptsText": "",
+      "_showFeedback": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_hideCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_showCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_reset": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_submit": {
+        "ariaLabel": "",
+        "buttonText": ""
+      }
+    },
+    "_feedback": {
+      "_partlyCorrect": {
+        "notFinal": "<p>Almost</p>\n",
+        "final": "<p>Almost</p>\n"
+      },
+      "_incorrect": {
+        "notFinal": "<p>Wrong</p>\n",
+        "final": "<p>Wrong</p>\n"
+      },
+      "correct": "<p>Right</p>\n"
+    },
+    "_selectable": 1,
+    "_questionWeight": 1,
+    "_recordInteraction": true,
+    "_isRandom": true,
+    "_shouldDisplayAttempts": false,
+    "_canShowFeedback": false,
+    "_canShowModelAnswer": true,
+    "_attempts": 1,
+    "_items": [
+      {
+        "feedback": "",
+        "_shouldBeSelected": false,
+        "text": "1977"
+      },
+      {
+        "feedback": "",
+        "_shouldBeSelected": false,
+        "text": "1953"
+      },
+      {
+        "feedback": "",
+        "_shouldBeSelected": false,
+        "text": "1888"
+      },
+      {
+        "feedback": "",
+        "_shouldBeSelected": true,
+        "text": "1917"
+      }
+    ],
+    "instruction": "Choose one or more options and select Submit."
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2cc0f399cb8005415741d",
+    "_layout": "right",
+    "_parentId": "57e2c938399cb8005415741b",
+    "_type": "component",
+    "body": "",
+    "displayTitle": "",
+    "title": "Component title",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "graphic",
+    "_graphic": {
+      "attribution": "",
+      "small": "course/en/assets/639b46ac5273635fd8f75e63e191c07a4b5029fb.jpg",
+      "large": "course/en/assets/639b46ac5273635fd8f75e63e191c07a4b5029fb.jpg",
+      "alt": ""
+    },
+    "instruction": ""
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2ccb6399cb8005415742a",
+    "_layout": "full",
+    "_parentId": "57e2ccb1399cb80054157429",
+    "_type": "component",
+    "body": "<p>Can you identify some of the key facts and figures associated with the Adapt Open Source project?</p>\n",
+    "displayTitle": "Matching",
+    "title": "Matching",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "matching",
+    "_buttons": {
+      "remainingAttemptText": "",
+      "remainingAttemptsText": "",
+      "_showFeedback": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_hideCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_showCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_reset": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_submit": {
+        "ariaLabel": "",
+        "buttonText": ""
+      }
+    },
+    "_feedback": {
+      "_partlyCorrect": {
+        "notFinal": "<p>Almost</p>\n",
+        "final": "<p>Almost</p>\n"
+      },
+      "_incorrect": {
+        "notFinal": "<p>Wrong</p>\n",
+        "final": "<p>Wrong</p>\n"
+      },
+      "correct": "<p>Right</p>\n"
+    },
+    "_items": [
+      {
+        "_options": [
+          {
+            "_isCorrect": true,
+            "text": "2013"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2015"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2010"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2008"
+          }
+        ],
+        "text": "The Adapt open-source project was formed in:"
+      },
+      {
+        "_options": [
+          {
+            "_isCorrect": true,
+            "text": "2008"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2010"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2015"
+          },
+          {
+            "_isCorrect": false,
+            "text": "2013"
+          }
+        ],
+        "text": "Adapt adheres to the WCAG 2.0 guidelines to level AA, but when were these published?"
+      },
+      {
+        "_options": [
+          {
+            "_isCorrect": false,
+            "text": "Portuguese"
+          },
+          {
+            "_isCorrect": false,
+            "text": "Esperanto"
+          },
+          {
+            "_isCorrect": true,
+            "text": "Hebrew"
+          },
+          {
+            "_isCorrect": false,
+            "text": "Finnish"
+          }
+        ],
+        "text": "Which of these languages would benefit from using the recent addition of Right To Left (RTL) language support within Adapt?"
+      }
+    ],
+    "placeholder": "Please select an option",
+    "_recordInteraction": true,
+    "_questionWeight": 1,
+    "_isRandom": true,
+    "_shouldDisplayAttempts": false,
+    "_canShowModelAnswer": true,
+    "_attempts": 1,
+    "instruction": ""
+  },
+  {
+    "_appearance": {
+      "_quoteText": {
+        "_isEnabled": false,
+        "_color": ""
+      }
+    },
+    "_id": "57e2d056399cb8005415742c",
+    "_layout": "full",
+    "_parentId": "57e2d052399cb8005415742b",
+    "_type": "component",
+    "body": "<p>Working memory is thought to be responsible for our ability to temporarily hold and manipulating information but according to a paper by Miller (1956) what &lsquo;magic number&rsquo; describes its capacity?</p>\n",
+    "displayTitle": "Slider",
+    "title": "Slider",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "_component": "slider",
+    "_feedback": {
+      "_partlyCorrect": {
+        "notFinal": "<p>Almost</p>\n",
+        "final": "<p>Almost</p>\n"
+      },
+      "_incorrect": {
+        "notFinal": "<p>Wrong</p>\n",
+        "final": "<p>Wrong</p>\n"
+      },
+      "correct": "<p>Right</p>\n"
+    },
+    "_buttons": {
+      "remainingAttemptText": "",
+      "remainingAttemptsText": "",
+      "_showFeedback": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_hideCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_showCorrectAnswer": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_reset": {
+        "ariaLabel": "",
+        "buttonText": ""
+      },
+      "_submit": {
+        "ariaLabel": "",
+        "buttonText": ""
+      }
+    },
+    "_showScale": true,
+    "_showScaleIndicator": true,
+    "_showNumber": true,
+    "_correctRange": {
+      "_top": null,
+      "_bottom": null
+    },
+    "_correctAnswer": "7",
+    "_scaleEnd": 10,
+    "_scaleStart": 1,
+    "labelEnd": "",
+    "labelStart": "",
+    "_recordInteraction": true,
+    "_questionWeight": 1,
+    "_shouldDisplayAttempts": false,
+    "_canShowModelAnswer": true,
+    "_attempts": 1,
+    "instruction": ""
+  }
+]

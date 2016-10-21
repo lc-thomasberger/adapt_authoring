@@ -1,0 +1,62 @@
+[
+  {
+    "_appearance": {
+      "_backgroundColor": "",
+      "_backgroundImage": {
+        "_small": "",
+        "_medium": "",
+        "_large": "",
+        "_repeat": true
+      },
+      "_backgroundGradient": {
+        "topColor": "",
+        "bottomColor": ""
+      },
+      "_invertColors": false,
+      "_minimumHeights": {
+        "_small": "",
+        "_medium": "",
+        "_large": ""
+      }
+    },
+    "_id": "57e2be69399cb800541573f7",
+    "_parentId": "57e2be68399cb800541573f6",
+    "_type": "article",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "body": "",
+    "displayTitle": "",
+    "title": "Article title"
+  },
+  {
+    "_appearance": {
+      "_backgroundColor": "",
+      "_backgroundImage": {
+        "_small": "",
+        "_medium": "",
+        "_large": "",
+        "_repeat": true
+      },
+      "_backgroundGradient": {
+        "topColor": "",
+        "bottomColor": ""
+      },
+      "_invertColors": false,
+      "_minimumHeights": {
+        "_small": "",
+        "_medium": "",
+        "_large": ""
+      }
+    },
+    "_id": "57e2c81d399cb80054157418",
+    "_parentId": "57e2c81d399cb80054157417",
+    "_type": "article",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "_classes": "",
+    "body": "",
+    "displayTitle": "",
+    "title": "Article title"
+  }
+]

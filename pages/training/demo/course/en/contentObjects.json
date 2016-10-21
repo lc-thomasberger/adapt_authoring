@@ -1,0 +1,52 @@
+[
+  {
+    "_appearance": {
+      "_backgroundColor": "",
+      "_headerImage": {
+        "_small": "",
+        "_medium": "",
+        "_large": ""
+      }
+    },
+    "_graphic": {
+      "alt": "",
+      "src": ""
+    },
+    "_id": "57e2be68399cb800541573f6",
+    "_parentId": "course",
+    "_type": "page",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "duration": "",
+    "linkText": "View",
+    "_classes": "",
+    "body": "<p>Scroll down to see what presentation components are available as part of the Version 2.0 core bundle.</p>\n",
+    "displayTitle": "Presentation Components",
+    "title": "Presentation Components"
+  },
+  {
+    "_appearance": {
+      "_backgroundColor": "",
+      "_headerImage": {
+        "_small": "",
+        "_medium": "",
+        "_large": ""
+      }
+    },
+    "_graphic": {
+      "alt": "",
+      "src": ""
+    },
+    "_id": "57e2c81d399cb80054157417",
+    "_parentId": "course",
+    "_type": "page",
+    "_isAvailable": true,
+    "_isOptional": false,
+    "duration": "",
+    "linkText": "View",
+    "_classes": "",
+    "body": "<p>Experimenting with some of&nbsp;Adapt&#39;s question components.</p>\n",
+    "displayTitle": "Question Components",
+    "title": "Question Components"
+  }
+]
