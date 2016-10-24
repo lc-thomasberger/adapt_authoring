@@ -21,6 +21,13 @@ h3 {
 li {
   margin-bottom: 15px;
 }
+a {
+  color: #36cde8;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
 
 .navigation {
   margin: 50px 0;
@@ -72,10 +79,7 @@ a.button:hover {
   margin: 0 auto;
 }
 
-.header .logo-main {
-  display: none;
-}
-.header .logo-sub {
+.header .logo {
   width: 400px;
   margin-bottom: 60px;
 }
@@ -103,10 +107,33 @@ a.button:hover {
   background-color: #00dd97;
   color: white;
 }
+.section.green a {
+  color: white;
+  font-weight: bold;
+  text-decoration: underline;
+}
 .section.dark {
   background-color: #263944;
   color: #abbcc5;
 }
 .section.centre {
   text-align: center;
+}
+.section.sub {
+  margin-top: 50px;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.qa {
+  margin-bottom: 20px;
+}
+.qa .q,
+.qa .a {
+}
+.qa .q {
+  font-size: 105%;
+  font-weight: bold;
+  margin-right: 10px;
+  margin-bottom: 5px;
 }
