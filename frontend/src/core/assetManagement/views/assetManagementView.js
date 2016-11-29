@@ -82,6 +82,21 @@ define(function(require){
       this.filterTimer = setTimeout(function() {
         Origin.trigger('assetManagement:sidebarFilter:add');
       }, this.filterTimeout);
+
+      this.checkIfFiltersCleared();
+    },
+
+    checkIfFiltersCleared: function() {
+      var search = this.collectionView.search;
+      var isSearchCleared = !search.title && !search.description;
+      var isSortCleared = _.isEqual(this.collectionView.sort, { title: 1 });
+      var isFiltersCleared = _.isEmpty(search.$or) && _.isEmpty(search.createdBy) && 
+        _.isEmpty(search['workspaces.course']) && _.isEmpty(search['workspaces.page']);
+      var isTagsCleared = _.isEmpty(this.collectionView.tags);
+
+      if (isSearchCleared && isSortCleared && isFiltersCleared && isTagsCleared) {
+        _.defer(function() { Origin.trigger('assetManagement:refine:cleared'); });
+      }
     }
   }, {
     template: 'assetManagement'

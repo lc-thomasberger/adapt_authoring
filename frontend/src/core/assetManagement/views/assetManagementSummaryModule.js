@@ -19,7 +19,10 @@ define(function(require) {
       // when ready, listen for filters
       this.listenTo(Origin, 'assetManagement:refine:ready', function() {
         this.hideResetButton();
-        this.listenTo(Origin, 'assetManagement:refine:apply', this.showResetButton);
+        this.listenTo(Origin, {
+          'assetManagement:refine:apply': this.showResetButton,
+          'assetManagement:refine:cleared': this.hideResetButton
+        });
       });
     },
 
