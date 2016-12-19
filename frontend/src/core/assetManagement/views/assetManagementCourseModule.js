@@ -10,7 +10,8 @@ define(function(require) {
     filterType: 'search',
 
     events: {
-      'click input': 'onInputClicked'
+      'change input': 'onInputChanged',
+      'click .reset': 'onResetClicked'
     },
 
     initialize: function(options) {
@@ -22,15 +23,33 @@ define(function(require) {
     },
 
     resetFilter: function() {
-      this.$('input').attr('checked', false);
+      this.$('input').prop('checked', false).change();
     },
 
-    onInputClicked: function(e) {
+    onInputChanged: _.debounce(function() {
       var ors = [];
-      _.each(this.$('input:checked'), function($el) {
-        ors.push({ 'workspaces.course': $el.id })
+
+      this.$('input:checked').each(function() {
+        if (this.id === 'no-course') {
+          // TODO: check no course filter
+          ors.push({
+            'workspaces.course': { $exists: false }
+          }, {
+            'workspaces.course': []
+          });
+        } else {
+          ors.push({ 'workspaces.course': this.id });
+        }
       });
-      this.applyFilter({ '$or':ors });
+
+      this.applyFilter({ '$or': ors });
+      this.$('.reset').toggleClass('display-none', !ors.length);
+    }, 0),
+
+    onResetClicked: function(event) {
+      event.preventDefault();
+
+      this.resetFilter();
     }
   }, {
     template: 'assetManagementCourseModule'

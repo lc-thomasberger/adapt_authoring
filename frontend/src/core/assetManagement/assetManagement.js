@@ -121,7 +121,7 @@ define(function(require) {
   function filterProjects(projects) {
     return projects.filter(function(project) {
       var shared = project.get('_isShared') === true;
-      var mine = project.get('createdBy') === Origin.sessionModel.get('_id');
+      var mine = project.get('createdBy') === Origin.sessionModel.get('id');
       return shared || mine;
     }).map(function(project) {
       return {
