@@ -3,7 +3,7 @@
  * Adapt Output plugin
  */
 var _ = require('underscore');
-var archive = require('archiver')('zip');
+var archiver = require('archiver');
 var async = require('async');
 var exec = require('child_process').exec;
 var fs = require('fs-extra');
@@ -217,6 +217,7 @@ AdaptOutput.prototype.publish = function(courseId, isPreview, request, response,
       },
       function(callback) {
         if (!isPreview) {
+          var archive = archiver('zip');
           // Now zip the build package
           var filename = path.join(COURSE_FOLDER, Constants.Filenames.Download);
           var zipName = helpers.slugify(outputJson['course'].title);
@@ -752,7 +753,12 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
       generateMetadata: generateMetadata,
       copyCustomPlugins: ['generateMetadata', copyCustomPlugins],
       copyAssets: ['generateMetadata', copyAssets]
-    }, zipExport);
+    }, function(error) {
+      if(error) {
+        return next(error);
+      }
+      zipExport();
+    });
   });
 
 };
@@ -1025,10 +1031,7 @@ function copyAssets(assetsCopied) {
 * post-processing
 */
 
-function zipExport(error) {
-  if(error) {
-    return next(error);
-  }
+function zipExport() {
   var archive = archiver('zip');
   var output = fs.createWriteStream(EXPORT_DIR +  '.zip');
   archive.on('error', cleanUpExport);
