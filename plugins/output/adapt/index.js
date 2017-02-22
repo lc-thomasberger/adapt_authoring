@@ -289,7 +289,7 @@ AdaptOutput.prototype.import = function(request, next) {
 
   async.waterfall([
     function courseFolderExists(cb) {
-      fse.ensureDir(COURSE_ROOT_FOLDER, cb);
+      fs.ensureDir(COURSE_ROOT_FOLDER, cb);
     },
     function parseForm(data, cb) {
       var form = IncomingForm();
@@ -335,10 +335,10 @@ function prepareImport(zipPath, unzipPath, callback) {
     }
     async.auto({
       removeZip: function(cb) {
-        fse.remove(zipPath, cb);
+        fs.remove(zipPath, cb);
       },
       loadMetadata: function(cb) {
-        fse.readJson(path.join(unzipPath, Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
+        fs.readJson(path.join(unzipPath, Constants.Filenames.Metadata), function onJsonRead(error, metadata) {
           if(error) {
             // TODO any other possible errors?
             switch(error.name) {
@@ -541,7 +541,7 @@ function importAsset(fileMetadata, metadata, assetImported) {
 
     var date = new Date();
     var hash = crypto.createHash('sha1');
-    var rs = fse.createReadStream(fileMetadata.path);
+    var rs = fs.createReadStream(fileMetadata.path);
 
     rs.on('data', function onReadData(pData) {
       hash.update(pData, 'utf8');
@@ -612,7 +612,7 @@ function importPlugin(pluginDir, pluginType, pluginImported) {
   var bowerJson, contentPlugin;
   async.waterfall([
     function readBowerJson(cb) {
-      fse.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
+      fs.readJson(path.join(pluginDir, Constants.Filenames.Bower), cb);
     },
     function getContentPlugin(json, cb) {
       bowerJson = json;
@@ -690,7 +690,7 @@ function removeImport(metadata, doneRemove) {
 
 // deletes passed list of dirs/files
 function cleanUpImport(dirs, doneCleanUp) {
-  async.each(dirs, fse.remove, doneCleanUp);
+  async.each(dirs, fs.remove, doneCleanUp);
 };
 
 
@@ -737,7 +737,7 @@ AdaptOutput.prototype.export = function(pCourseId, devMode, request, response, p
   next = pNext;
 
   // create the EXPORT_DIR if it isn't there
-  fse.ensureDir(EXPORT_DIR, function(error) {
+  fs.ensureDir(EXPORT_DIR, function(error) {
     if(error) {
       return next(error);
     }
@@ -785,14 +785,14 @@ function generateMetadata(generatedMetadata) {
       return generatedMetadata(error);
     }
     metadata = _.reduce(results, function(memo,result){ return _.extend(memo,result); });
-    fse.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
+    fs.writeJson(path.join(EXPORT_DIR, Constants.Filenames.Metadata), metadata, { spaces:0 }, generatedMetadata);
   });
 };
 
 
 // pulls out relevant attributes from package.json
 function getPackageData(frameworkDir, gotPackageJson) {
-  fse.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
+  fs.readJson(path.join(frameworkDir, Constants.Filenames.Package), function onJsonRead(error, packageJson) {
     gotPackageJson(null, _.pick(packageJson, 'version'));
   });
 };
@@ -953,7 +953,7 @@ function copyFrameworkFiles(filesCopied) {
     var excludesRE = new RegExp(/\.git\b|\.DS_Store|\/node_modules|\/courses\b|\/course\b|\/exports\b/);
     var pluginsRE = new RegExp('\/components\/|\/extensions\/|\/menu\/|\/theme\/');
 
-    fse.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
+    fs.copy(FRAMEWORK_ROOT_DIR, EXPORT_DIR, {
       filter: function(filePath) {
         var posixFilePath = filePath.replace(/\\/g, '/');
         var isIncluded = posixFilePath.search(includesRE) > -1;
@@ -982,7 +982,7 @@ function copyCustomPlugins(filesCopied) {
   var dest = path.join(EXPORT_DIR, Constants.Folders.Plugins);
   async.each(metadata.pluginIncludes, function iterator(plugin, cb) {
     var pluginDir = path.join(src, plugin.folder, plugin.name);
-    fse.copy(pluginDir, path.join(dest, plugin.name), cb);
+    fs.copy(pluginDir, path.join(dest, plugin.name), cb);
   }, filesCopied);
 };
 
@@ -990,18 +990,18 @@ function copyCustomPlugins(filesCopied) {
 function copyCourseFiles(filesCopied) {
   var source = path.join(COURSE_ROOT_DIR, Constants.Folders.Build, Constants.Folders.Course);
   var dest = path.join(EXPORT_DIR, Constants.Folders.Source, Constants.Folders.Course);
-  fse.ensureDir(dest, function(error) {
+  fs.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);
     }
-    fse.copy(source, dest, filesCopied);
+    fs.copy(source, dest, filesCopied);
   });
 };
 
 // copies used assets directly from the data folder
 function copyAssets(assetsCopied) {
   var dest = path.join(EXPORT_DIR, Constants.Folders.Assets);
-  fse.ensureDir(dest, function(error) {
+  fs.ensureDir(dest, function(error) {
     if (error) {
       return filesCopied(error);
     }
@@ -1014,7 +1014,7 @@ function copyAssets(assetsCopied) {
         filestorage.getStorage(results[0].repository, function gotStorage(error, storage) {
           var srcPath = storage.resolvePath(results[0].path);
           var destPath = path.join(dest, assetKey);
-          fse.copy(srcPath, destPath, doneIterator);
+          fs.copy(srcPath, destPath, doneIterator);
         });
       });
     }, assetsCopied);
@@ -1030,7 +1030,7 @@ function zipExport(error) {
     return next(error);
   }
   var archive = archiver('zip');
-  var output = fse.createWriteStream(EXPORT_DIR +  '.zip');
+  var output = fs.createWriteStream(EXPORT_DIR +  '.zip');
   archive.on('error', cleanUpExport);
   output.on('close', cleanUpExport);
   archive.pipe(output);
@@ -1039,7 +1039,7 @@ function zipExport(error) {
 
 // remove the EXPORT_DIR, if there is one
 function cleanUpExport(exportError) {
-  fse.remove(EXPORT_DIR, function(removeError) {
+  fs.remove(EXPORT_DIR, function(removeError) {
     next(exportError || removeError);
   });
 };
