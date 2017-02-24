@@ -9,7 +9,7 @@ var configData;
 server.get('/config/config.json', function (req, res, next) {
   if (!configData) {
     configData = configuration.getAllClientSideConfigs();
-  } 
+  }
 
   return res.json(configData);
 });
