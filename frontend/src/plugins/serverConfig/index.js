@@ -24,6 +24,7 @@ define(function(require) {
   });
 
   Origin.on('router:' + CLASSNAME, function(location, subLocation, action) {
+    Origin.trigger('sidebar:views:remove');
     Origin.trigger('location:title:update', { title: TITLE });
     Origin.router.createView(ServerConfigView);
   });
