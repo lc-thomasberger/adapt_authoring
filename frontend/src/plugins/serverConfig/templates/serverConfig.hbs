@@ -1,0 +1,15 @@
+<div class="inner">
+  <div class="text">
+    The following config attributes are surfaced by the server:
+  </div>
+  <div class="config">
+    {
+    {{#each this}}
+      <div class="attribute">
+        <div class="key">{{@key}}:</div>
+        <div class="value">{{this}}</div>
+      </div>
+    {{/each}}
+    }
+  </div>
+</div>
