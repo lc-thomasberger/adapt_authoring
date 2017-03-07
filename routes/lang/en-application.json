@@ -313,6 +313,8 @@
   "app.successdefaulttitle": "Success",
   "app.export": "Export source code",
   "app.exporting": "Exporting source code",
+  "app.exporthtml": "Export JSON to HTML",
+  "app.exportinghtml": "Exporting HTML",
   "app.exportcoursetitle": "Exporting course",
   "app.exporterrortitle": "Course export failed",
   "app.exportcoursetext": "Please stand by, this may take a few moments.",

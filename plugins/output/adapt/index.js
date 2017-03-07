@@ -24,7 +24,8 @@ var origin = require('../../../'),
     exec = require('child_process').exec,
     semver = require('semver'),
     version = require('../../../version'),
-    logger = require('../../../lib/logger');
+    logger = require('../../../lib/logger'),
+    adapt2html = require('adapt2html');
 
 function AdaptOutput() {
 }
@@ -355,6 +356,85 @@ AdaptOutput.prototype.export = function (courseId, request, response, next) {
     }
   ],
   next);
+};
+
+/**
+* FUNCTION: Export HTML
+* ------------------------------------------------------------------------------
+*/
+AdaptOutput.prototype.exportHtml = function(courseId, request, response, next) {
+  var user = usermanager.getCurrentUser();
+  var userId = user._id;
+  var folders = Constants.Folders;
+  var exportsDir = path.join(
+    configuration.tempDir,
+    configuration.getConfig('masterTenantID'),
+    folders.Framework,
+    folders.Exports
+  );
+  var destDir = path.join(exportsDir, userId);
+  var destZip = path.join(exportsDir, userId + '.zip');
+  var courseJsonDir;
+  var outputJson = {};
+  var resultObject = {};
+
+  self = this;
+
+  async.series([
+    function(callback) {
+      self.getCourseJSON(user.tenant._id, courseId, function(err, data) {
+        if (err) {
+          return callback(err);
+        }
+
+        outputJson = data;
+        callback(null);
+      });
+    },
+    function(callback) {
+      self.sanitizeCourseJSON(outputJson, function(err, data) {
+        if (err) {
+          return callback(err);
+        }
+
+        outputJson = data;
+        callback(null);
+      });
+    },
+    function(callback) {
+      self.writeCourseJSON(outputJson, destDir, callback);
+    },
+    function(callback) {
+      courseJsonDir = path.join(destDir, outputJson.config._defaultLanguage);
+      adapt2html.main(courseJsonDir, function(err) { callback(err || null); });
+    },
+    function(callback) {
+      var archive = archiver('zip');
+      var output = fse.createWriteStream(destZip);
+
+      archive.on('error', function(err) {
+        logger.log('error', err);
+        callback(err);
+      });
+
+      output.on('close', function() {
+        resultObject.courseTitle = outputJson.course.title;
+        callback(null);
+      });
+
+      archive.pipe(output);
+
+      archive.bulk([
+        { expand: true, cwd: path.join(courseJsonDir, 'adapt2html'), src: ['**/*'] }
+      ]).finalize();
+    }
+  ], function(err) {
+    fse.remove(destDir, function(removeErr) {
+      var error = err || removeErr;
+
+      error ? next(error) : next(null, resultObject);
+    });
+  });
 };
 
 /**
