@@ -590,10 +590,12 @@
       "help": "When this is set to 'true', your colleagues will be able to see this course from the 'Shared courses' option"
     },
     "themeSettings": {
-      "type": "object"
+      "type": "object",
+      "default": ""
     },
     "menuSettings": {
-      "type": "object"
+      "type": "object",
+      "default": ""
     },
     "_lockType": {
       "type": "string",
