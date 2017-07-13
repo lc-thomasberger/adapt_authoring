@@ -177,31 +177,16 @@ define(function(require) {
 	}
 
 	var buildSchema = function(schema, options, type) {
-
-    	try {
-            // These types of schemas change frequently and cannot be cached.
-    	    var volatileTypes = ['course', 'config', 'article', 'block', 'component'];
-
-    	    if (_.indexOf(volatileTypes, type) == -1 && builtSchemas[type]) {
-    	       return builtSchemas[type];
-            }
-
-            var scaffoldSchema = {};
-
-            _.each(schema, function(field, key) {
-    	       // Build schema
-                setupSchemaFields(field, key, schema, scaffoldSchema);
-            });
-
-            // Only cache non-volatile types.
-            if (_.indexOf(volatileTypes, type) == -1) {
-                builtSchemas[type] = scaffoldSchema;
-            }
-
-            return scaffoldSchema;
-        } catch (e) {
-            alert('buildSchema - ' + e.message);
-        }
+		try {
+			var scaffoldSchema = {};
+			// Build schema
+			_.each(schema, function(field, key) {
+				setupSchemaFields(field, key, schema, scaffoldSchema);
+			});
+			return scaffoldSchema;
+		} catch (e) {
+			alert('buildSchema - ' + e.message);
+		}
 	}
 
 	var buildFieldsets = function(schema, options) {
