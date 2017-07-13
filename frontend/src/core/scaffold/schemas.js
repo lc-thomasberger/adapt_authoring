@@ -99,7 +99,7 @@ define(function(require) {
             // Return the modified schema
             return schema;
         } else {
-            var schema = Origin.schemas.get(schemaName);
+            var schema = JSON.parse(JSON.stringify(Origin.schemas.get(schemaName)));
             delete schema._extensions;
             // Remove globals as these are appended to the course model
             delete schema.globals;
