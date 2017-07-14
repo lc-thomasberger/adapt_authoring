@@ -47,8 +47,7 @@ define(function(require) {
                     autocomplete_url: '/api/autocomplete/tag',
                     onAddTag: _.bind(this.onAddTag, this),
                     onRemoveTag: _.bind(this.onRemoveTag, this),
-                    'minChars' : 3,
-                    'maxChars' : 30 
+                    'minChars' : 1
                 });
             }, this), 500)
             
