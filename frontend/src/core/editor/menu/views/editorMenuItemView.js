@@ -110,7 +110,7 @@ define(function(require){
 
     },
 
-    selectedLevel: function() {
+    selectedLevel: function(event) {
       $(".editor-menu-layer").each(function() {
         if($(this).hasClass("selected")){
             $(this).removeClass("selected");

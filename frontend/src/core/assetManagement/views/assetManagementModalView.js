@@ -84,12 +84,12 @@ define(function(require) {
     },
 
     onNewAssetClicked: function(e) {
-      event && event.preventDefault();
+      e && e.preventDefault();
       if($('asset-management-modal-new-asset').length === 0) {
         Origin.trigger('assetManagement:refine:hide');
         Origin.trigger('assetManagement:assetPreviewView:delete');
         Origin.trigger('assetManagement:refine:hide');
-        var newAssetView = new AssetManagementModalNewAssetView({model: new AssetModel()});
+        var newAssetView = new AssetManagementModalNewAssetView({ model: new AssetModel() });
         $('.asset-management-inner').append(newAssetView.$el);
       }
     },
