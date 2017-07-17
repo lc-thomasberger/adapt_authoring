@@ -294,7 +294,7 @@
   "app.databasepass": "Database Password",
   "app.databaseport": "Database Port",
   "app.emailadminpasswordresetsubject": "Your Adapt password has been reset",
-  "app.emailadminpasswordresetbody": "Your password has been reset.  Your new password is: %{data}",
+  "app.emailadminpasswordresetbody": "Your password has been reset.",
   "app.emailforgottenpasswordsubject": "Reset Your Adapt Password",
   "app.emailforgottenpasswordbody": "<p>We've received a request to reset the password for your <a href='%{rootUrl}' target='_blank'>Adapt authoring tool</a> account.</p><p>If you weren't expecting this email, don't worry! You can safely ignore it. Otherwise, please click the button below.</p>",
   "app.edittenant": "Edit Tenant",
