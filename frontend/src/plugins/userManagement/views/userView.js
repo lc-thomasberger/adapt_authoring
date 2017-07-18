@@ -183,7 +183,8 @@ define(function(require){
         title: window.polyglot.t('app.resetpasswordtitle'),
         text: window.polyglot.t('app.resetpasswordinstruction', { email: this.model.get('email') }),
         inputType: 'password',
-        confirmButtonText: 'Save',
+        confirmButtonText: window.polyglot.t('app.save'),
+        cancelButtonText: window.polyglot.t('app.cancel'),
         closeOnConfirm: false,
         callback: function(newPassword) {
           if(newPassword === false) return;
