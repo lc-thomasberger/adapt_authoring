@@ -1,52 +1,89 @@
+<button class="close"><i class="fa fa-times-circle"></i></button>
+
 <div class="asset-preview-details text-centered">
+  <!-- Header -->
+  <div class="asset-preview-details-header">
+    Asset details
+  </div>
+
+  <!-- Preview content -->
   <div class="asset-preview-details-preview">
-    {{#ifValueEquals assetType "image"}}
-      <img src="api/asset/serve/{{_id}}"/>
-    {{/ifValueEquals}}
-
-    {{#ifValueEquals assetType "video"}}
-      <video preload="none" width="640px" height="360px" poster="" style="width:100%; height:100%;">
-        <source src="api/asset/serve/{{_id}}" type="{{mimeType}}"/>
-      </video>
-    {{/ifValueEquals}}
-
-    {{#ifValueEquals assetType "audio"}}
-      <i class="fa fa-file-audio-o"></i>
-      <audio src="api/asset/serve/{{_id}}" type="{{mimeType}}" controls="controls" style="width:100%;"></audio>
-    {{/ifValueEquals}}
-
-    {{#ifValueEquals assetType "other"}}
-      <i class="fa fa-file-o"></i>
-    {{/ifValueEquals}}
+    {{> part_assetPreview this}}
   </div>
 
-  <h1 class="asset-preview-title">{{title}}</h1>
-  <div class="asset-preview-description">{{description}}</div>
-  <div class="asset-size">{{t 'app.assetsize'}}: {{{bytesToSize size}}}</div>
+  <!-- Details text -->
+  <div class="asset-preview-details-text">
+    <div class="asset-preview-title">{{title}}</div>
+    {{#if description}}
+    <div class="asset-preview-description">{{description}}</div>
+    {{/if}}
 
-  {{#if metadata.duration}}
-    <div class="asset-duration break">{{t 'app.assetduration'}}: {{{formatDuration metadata.duration}}}</div>
-  {{/if}}
+    <!-- Asset metadata -->
+    <div class="asset-group">
+      {{#if metadata.duration}}
+        <div class="asset-duration break">{{{formatDuration metadata.duration}}}</div>
+      {{/if}}
+      {{#if metadata.height}}
+        <div class="asset-height">{{{metadata.width}}}px x {{{metadata.height}}}px</div>
+      {{/if}}
+      <div class="asset-size">{{{bytesToSize size}}}</div>
+      {{#if isRestricted}}
+      <div class="asset-restricted">
+        <i class="fa fa-copyright"></i>
+        <span>{{t 'app.assetrestricted'}}</span>
+      </div>
+      {{/if}}
+    </div>
+    {{#if tags.length}}
+    <div class="asset-group">
+      <div class="label">Tags:</div>
+      <div class="asset-tags">
+        {{{renderTags tags "title"}}}
+      </div>
+    </div>
+    {{/if}}
 
-  {{#if metadata.height}}
-    <div class="asset-height">{{t 'app.assetdimensions'}}: {{{metadata.width}}} x {{{metadata.height}}}</div>
-  {{/if}}
+    <!-- List of courses asset's used in -->
+    {{#if courses.length}}
+    <div class="asset-group">
+      <div class="label">Used in:</div>
+      <div class="courses">
+        {{#each courses}}
+        <div class="course">{{this}}</div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
 
-  {{#if tags.length}}
-    <div class="asset-tags">{{t 'app.tags'}}: {{{renderTags tags "title"}}}</div>
-  {{/if}}
+    <!-- Show created date (and user if allowed) -->
+    <div class="asset-preview-date">
+      Uploaded on {{momentFormat createdAt "DD/MM/YY"}}
+      {{#ifHasPermissions "{{tenantid}}/user:read"}}
+        <span class="label">by</span> {{getUserNameFromId createdBy}}
+      {{/ifHasPermissions}}
+    </div>
 
-  {{#if isSelectable}}
-  <div class="assset-select">
-   <a href="#" class="btn primary confirm-select-asset">Select</a>
-  </div>
-  {{/if}}
-  <div class="asset-preview-edit">
-    {{#if _isDeleted}}
-    <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
-    {{else}}
-    <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
-    <button class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+    <!-- Buttons -->
+    {{#if isSelectable}}
+      <div class="asset-group">
+       <a href="#" class="btn primary confirm-select-asset">Select</a>
+       <a href="#" class="btn secondary confirm-autofill-asset">Autofill</a>
+      </div>
+    {{/if}}
+    {{#if isEditable}}
+      <div class="asset-preview-edit asset-group">
+        {{#if _isDeleted}}
+          <button class="asset-preview-restore-button btn alert">{{t 'app.restore'}}</button>
+        {{else}}
+          <button class="asset-preview-edit-button btn primary">{{t 'app.edit'}}</button>
+          {{#ifHasPermissions "{{tenantid}}/asset/*:delete"}}
+            <button {{#if courses.length}}disabled{{/if}} class="asset-preview-delete-button btn alert">{{t 'app.delete'}}</button>
+            {{#if courses.length}}
+              <div class="instruction asset-group">{{{t 'app.assetdeleteinstruction'}}}</div>
+            {{/if}}
+          {{/ifHasPermissions}}
+        {{/if}}
+      </div>
     {{/if}}
   </div>
 

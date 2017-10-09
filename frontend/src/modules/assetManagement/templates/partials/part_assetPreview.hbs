@@ -1,0 +1,17 @@
+{{#ifValueEquals assetType "image"}}
+  <img src="api/asset/serve/{{_id}}{{cacheBuster this}}"/>
+{{/ifValueEquals}}
+
+{{#ifValueEquals assetType "video"}}
+  <video preload="none" width="640px" height="360px" poster="" style="width:100%; height:100%;">
+    <source src="api/asset/serve/{{_id}}" type="{{mimeType}}"/>
+  </video>
+{{/ifValueEquals}}
+
+{{#ifValueEquals assetType "audio"}}
+  <audio src="api/asset/serve/{{_id}}" type="{{mimeType}}" controls="controls" style="width:100%;"></audio>
+{{/ifValueEquals}}
+
+{{#ifValueEquals assetType "other"}}
+  <i class="fa-5x {{getAssetIcon mimeType}}"></i>
+{{/ifValueEquals}}

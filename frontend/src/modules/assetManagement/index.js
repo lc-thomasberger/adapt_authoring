@@ -7,50 +7,8 @@ define(function(require) {
   var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
+  var CourseCollection = require('core/collections/courseCollection');
   var TagsCollection = require('core/collections/tagsCollection');
-
-  Origin.on('router:assetManagement', function(location, subLocation, action) {
-    Origin.assetManagement = {};
-    Origin.assetManagement.filterData = {};
-
-    if (!location) {
-        var tagsCollection = new TagsCollection();
-
-        tagsCollection.fetch({
-          success: function() {
-            // Load asset collection before so sidebarView has access to it
-            var assetCollection = new AssetCollection();
-            // No need to fetch as the collectionView takes care of this
-            // Mainly due to serverside filtering
-            Origin.trigger('location:title:hide');
-            Origin.sidebar.addView(new AssetManagementSidebarView({collection: tagsCollection}).$el);
-            Origin.contentPane.setView(AssetManagementView, {collection: assetCollection});
-            Origin.trigger('assetManagement:loaded');
-          },
-          error: function() {
-            console.log('Error occured getting the tags collection - try refreshing your page');
-          }
-        });
-    } else if (location=== 'new') {
-        Origin.trigger('location:title:update', {title: 'New Asset'});
-        Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-        Origin.contentPane.setView(AssetManagementNewAssetView, { model: new AssetModel });
-    } else if (subLocation === 'edit') {
-      var Asset = new AssetModel({ _id: location });
-      // Fetch existing asset model
-      Asset.fetch({
-        success: function() {
-          Origin.trigger('location:title:update', {title: 'Edit Asset'});
-          Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el);
-          Origin.contentPane.setView(AssetManagementNewAssetView, { model: Asset });
-        }
-      });
-    }
-  });
-
-  Origin.on('globalMenu:assetManagement:open', function() {
-    Origin.router.navigateTo('assetManagement');
-  });
 
   Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
@@ -61,4 +19,86 @@ define(function(require) {
       "sortOrder": 2
     });
   });
+
+  Origin.on('globalMenu:assetManagement:open', function() {
+    Origin.router.navigateTo('assetManagement');
+  });
+
+  Origin.on('router:assetManagement', function(location, subLocation, action) {
+    Origin.assetManagement = {
+      filterData: {}
+    };
+    if(!location) {
+      loadCollectionView();
+    }
+    else if(location === 'new') {
+      loadAssetView();
+    }
+    else if(subLocation === 'edit'){
+      loadAssetView(location);
+    }
+  });
+
+  function loadCollectionView() {
+    (new TagsCollection()).fetch({
+      success: function(tags) {
+        // Sidebar also needs access to collection, so create now. Fetch is done
+        // in collectionView (thanks to server-side filtering)
+        Origin.trigger('location:title:hide');
+        Origin.sidebar.addView(new AssetManagementSidebarView({ collection: tags }).$el);
+        Origin.contentPane.setView(AssetManagementView, { collection: new AssetCollection() });
+        Origin.trigger('assetManagement:loaded');
+      },
+      error: handleError
+    });
+  }
+
+  function loadAssetView(id) {
+    var isNew = id === undefined;
+    // TODO localise this
+    var title = isNew ? 'New Asset' : 'Edit Asset';
+    Origin.trigger('location:title:update', { title: title} );
+
+    var data = isNew ? {} : { _id: id };
+    var model = new AssetModel(data);
+    // needed for filtering
+    (new CourseCollection()).fetch({
+      success: function(courses) {
+        model.set('projects', filterProjects(courses));
+        if(isNew) loadView();
+        else model.fetch({ success: loadView });
+      }
+    });
+
+    function loadView() {
+      Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
+        "backButtonText": "Back to assets",
+        "backButtonRoute": "/#/assetManagement"
+      });
+      Origin.contentPane.setView(AssetManagementNewAssetView, { model: model });
+    };
+  }
+
+  // filters out projects that aren't 'mine' OR shared
+  // @return just the  _ids and titles
+  function filterProjects(projects) {
+    return projects.filter(function(project) {
+      var shared = project.get('_isShared') === true;
+      var mine = project.get('createdBy') === Origin.sessionModel.get('_id');
+      return shared || mine;
+    }).map(function(project) {
+      return {
+        _id: project.get('_id'),
+        title: project.get('title')
+      };
+    });
+  }
+
+  function handleError() {
+    // TODO localise this
+    Origin.Notify.alert({
+      type: 'error',
+      text: 'An error occured fetching data - try refreshing your page'
+    });
+  }
 });

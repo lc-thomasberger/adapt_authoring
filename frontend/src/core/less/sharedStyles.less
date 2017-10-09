@@ -1,3 +1,7 @@
+.no-scroll {
+  overflow:hidden;
+}
+
 // Page-style form background
 .form-container-style {
   max-width: 800px;
@@ -11,6 +15,19 @@
       border-bottom: none;
     }
   }
+
+.nothing-to-show {
+   text-align: center;
+   position: relative;
+   margin-top: 20%;
+   font-size: 150%;
+   color: #c4e2ef;
+   font-weight: bold;
+   i {
+     display: block;
+     font-size: 70px;
+     margin-bottom: 10px;
+   }
 }
 
 .no-wrap {
@@ -28,13 +45,28 @@
   cursor: default;
 }
 
+// hides sidebars, nav bars etc, and displays blue bg
+// e.g. login screen
 .no-ui {
+  max-width: 450px;
+  margin: 0 auto;
+  color: #fff;
   background: url(assets/login_bg.jpg) no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  .sidebar, .navigation, .location-title {
-    display: none;
+
+  button.small {
+      font-size: 16px;
+      margin: 0 auto;
+      display: block;
+      width: 200px;
+      margin-top: 20px;
+      height: 80%;
   }
+
+  .sidebar, .navigation, .location-title { display: none; }
+  #app { margin-left: 0px; }
+  a { color: #fff; }
 }
