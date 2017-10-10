@@ -7,7 +7,7 @@ define(function(require) {
   var AssetManagementSidebarView = require('./views/assetManagementSidebarView');
   var AssetManagementNewAssetView = require('./views/assetManagementNewAssetView');
   var AssetManagementNewAssetSidebarView = require('./views/assetManagementNewAssetSidebarView');
-  var CourseCollection = require('core/collections/courseCollection');
+  // var CourseCollection = require('modules/projects/collections/courseCollection');
   var TagsCollection = require('core/collections/tagsCollection');
 
   Origin.on('origin:dataReady login:changed', function() {
@@ -62,13 +62,14 @@ define(function(require) {
     var data = isNew ? {} : { _id: id };
     var model = new AssetModel(data);
     // needed for filtering
-    (new CourseCollection()).fetch({
-      success: function(courses) {
-        model.set('projects', filterProjects(courses));
-        if(isNew) loadView();
-        else model.fetch({ success: loadView });
-      }
-    });
+    // (new CourseCollection()).fetch({
+    //   success: function(courses) {
+    //     model.set('projects', filterProjects(courses));
+    //     if(isNew) loadView();
+    //     else model.fetch({ success: loadView });
+    //   }
+    // });
+    loadView();
 
     function loadView() {
       Origin.sidebar.addView(new AssetManagementNewAssetSidebarView().$el, {
