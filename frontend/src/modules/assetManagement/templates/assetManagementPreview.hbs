@@ -57,10 +57,7 @@
 
     <!-- Show created date (and user if allowed) -->
     <div class="asset-preview-date">
-      Uploaded on {{momentFormat createdAt "DD/MM/YY"}}
-      {{#ifHasPermissions "{{tenantid}}/user:read"}}
-        <span class="label">by</span> {{getUserNameFromId createdBy}}
-      {{/ifHasPermissions}}
+      {{t "app.uploadedon"}} {{momentFormat createdAt "DD/MM/YY"}}
     </div>
 
     <!-- Buttons -->
