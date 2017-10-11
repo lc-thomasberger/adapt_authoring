@@ -308,5 +308,10 @@
   "app.page": "page",
   "app.article": "article",
   "app.block": "block",
-  "app.component": "component"
+  "app.component": "component",
+  "app.assetdetails": "Asset details",
+  "app.uploadedon": "Uploaded on",
+  "app.select": "Select",
+  "app.autofill": "Autofill",
+  "app.pixels": "px"
 }

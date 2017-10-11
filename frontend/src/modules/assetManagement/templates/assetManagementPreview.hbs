@@ -3,7 +3,7 @@
 <div class="asset-preview-details text-centered">
   <!-- Header -->
   <div class="asset-preview-details-header">
-    Asset details
+    {{t "app.assetdetails"}}
   </div>
 
   <!-- Preview content -->
@@ -24,7 +24,7 @@
         <div class="asset-duration break">{{{formatDuration metadata.duration}}}</div>
       {{/if}}
       {{#if metadata.height}}
-        <div class="asset-height">{{{metadata.width}}}px x {{{metadata.height}}}px</div>
+        <div class="asset-height">{{{metadata.width}}}{{t "app.pixels"}} x {{{metadata.height}}}{{t "app.pixels"}}</div>
       {{/if}}
       <div class="asset-size">{{{bytesToSize size}}}</div>
       {{#if isRestricted}}
@@ -66,8 +66,8 @@
     <!-- Buttons -->
     {{#if isSelectable}}
       <div class="asset-group">
-       <a href="#" class="btn primary confirm-select-asset">Select</a>
-       <a href="#" class="btn secondary confirm-autofill-asset">Autofill</a>
+       <a href="#" class="btn primary confirm-select-asset">{{t "app.select"}}</a>
+       <a href="#" class="btn secondary confirm-autofill-asset">{{t "app.autofill"}}</a>
       </div>
     {{/if}}
     {{#if isEditable}}
