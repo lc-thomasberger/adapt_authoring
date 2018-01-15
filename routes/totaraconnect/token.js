@@ -6,7 +6,7 @@ var permissions = require('../../lib/permissions');
 var usermanager = require('../../lib/usermanager');
 // only allow certain attributes to be added to a jwt
 var whitelistedAttributes = [
-  "_id",
+  "user",
   "_tenantId",
 ];
 
@@ -40,11 +40,11 @@ var exports = module.exports = {
       if(error) {
         return cb(new exports.AuthorisationError(`Authorisation token is not valid, ${error.message}`));
       }
-      if(!decodedData._id || !decodedData._tenantId) {
+      if(!decodedData.user || !decodedData._tenantId) {
         return cb(new exports.AuthorisationError(`Token data is not valid`));
       }
       var resource = permissions.buildResourceString(decodedData._tenantId, permissionData.route);
-      permissions.hasPermission(decodedData._id, permissionData.action, resource, function(error, hasPermission) {
+      permissions.hasPermission(decodedData.user, permissionData.action, resource, function(error, hasPermission) {
         if(error || !hasPermission) {
           return cb(new exports.AuthorisationError('Failed permissions check'));
         }
