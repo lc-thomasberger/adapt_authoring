@@ -53,6 +53,7 @@
       // modules
       'modules/actions/index',
       'modules/assetManagement/index',
+      'modules/configuration/index',
       'modules/contentPane/index',
       'modules/contextMenu/index',
       'modules/editor/index',
@@ -70,6 +71,8 @@
       'modules/sidebar/index',
       'modules/user/index',
       'modules/userManagement/index',
+      // plugins
+      'plugins/totaraconnect/index',
     ], callback);
   }
 
