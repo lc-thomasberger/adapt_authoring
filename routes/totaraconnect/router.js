@@ -1,5 +1,6 @@
 var express = require('express');
 var controller = require('./controller');
+var errors = require('./errors');
 
 var router = express.Router();
 var crud = controller.crudWrapper(router);
@@ -23,6 +24,6 @@ crud.get('/courses', controller.getCourses);
 crud.get('/scorm/:id', controller.getScorm);
 
 // Error handling
-router.use(controller.error);
+router.use(errors.handler);
 
 module.exports = router;

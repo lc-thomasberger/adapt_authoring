@@ -5,7 +5,7 @@ var origin = require('../../lib/application')();
 module.exports = function() {
   addSchema('publishedcourse');
   addSchema('token');
-
+  // TODO 
   // origin.contentmanager.addContentHook('destroy', 'course', { when: 'post' }, function(contentType, data, next) {
   //   origin.db.destroy('publishedcourse', { course: data._id });
   // });

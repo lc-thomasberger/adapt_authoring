@@ -1,6 +1,8 @@
 var async = require('async');
 var jwt = require('jsonwebtoken');
 var configuration = require('../../lib/configuration');
+var errors = require('./errors');
+var ErrorConsts = require('./constants').Messages.Fail;
 var origin = require('../../lib/application')();
 var permissions = require('../../lib/permissions');
 var usermanager = require('../../lib/usermanager');
@@ -11,18 +13,12 @@ var whitelistedAttributes = [
 ];
 
 var exports = module.exports = {
-  AuthorisationError: function(message) {
-    var error = new Error();
-    error.name = 'AuthorisationError';
-    error.message = message;
-    return error;
-  },
   generate: function(data, cb) {
     var _handleError = function(error) {
-      cb(new Error(`Failed to generate authorisation token, ${error}`));
+      cb(errors.ServerError(`${ErrorConsts.TokenGen}, ${error}`));
     };
     if(!data) {
-      return cb(`Didn't generate token, no data passed`);
+      return cb(ErrorConsts.TokenNoData);
     }
     // generate a valid jwt
     jwt.sign(_.pick(data, whitelistedAttributes), configuration.getConfig('jwtSecret'), function(error, token) {
@@ -34,19 +30,19 @@ var exports = module.exports = {
   },
   authenticate: function(token, permissionData, cb) {
     if(!token) {
-      return cb(new exports.AuthorisationError(`Expected an authorisation token, received ${token}`));
+      return cb(errors.AuthorisationError(`${ErrorConsts.UnexpectedToken}${token}`));
     }
     jwt.verify(token, configuration.getConfig('jwtSecret'), function(error, decodedData) {
       if(error) {
-        return cb(new exports.AuthorisationError(`Authorisation token is not valid, ${error.message}`));
+        return cb(errors.AuthorisationError(`${ErrorConsts.TokenInvalid}, ${error.message}`));
       }
       if(!decodedData.user || !decodedData._tenantId) {
-        return cb(new exports.AuthorisationError(`Token data is not valid`));
+        return cb(errors.AuthorisationError(ErrorConsts.TokenInvalid));
       }
       var resource = permissions.buildResourceString(decodedData._tenantId, permissionData.route);
       permissions.hasPermission(decodedData.user, permissionData.action, resource, function(error, hasPermission) {
         if(error || !hasPermission) {
-          return cb(new exports.AuthorisationError('Failed permissions check'));
+          return cb(errors.AuthorisationError(ErrorConsts.PermissionsCheck));
         }
         cb(null, decodedData);
       });

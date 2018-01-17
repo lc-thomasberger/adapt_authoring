@@ -1,5 +1,6 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require) {
+  var Helpers = require('core/helpers');
   var Origin = require('core/origin');
   var TotaraConnectView = require('./views/totaraConnectView');
 
@@ -20,21 +21,29 @@ define(function(require) {
   });
 
   function handlePublish() {
-    if (!Helpers.validateCourseContent(Origin.editor.data.course) || Origin.editor.isDownloadPending) {
+    if(Origin.editor.isDownloadPending) {
       return;
     }
-    $('.editor-common-sidebar-publish-inner').addClass('display-none');
-    $('.editor-common-sidebar-publishing').removeClass('display-none');
+    Helpers.validateCourseContent(Origin.editor.data.course, function(error, isValid) {
+      if(!isValid) {
+        Origin.Notify.alert({ type: 'error', text: error.message });
+        return;
+      }
+      $('.editor-sidebar-publish .publish').addClass('display-none');
+      $('.editor-sidebar-publish .publishing').removeClass('display-none');
 
-    $.get('/totaraconnect/publish/' + Origin.editor.data.course.get('_id'), function(jqXHR, textStatus, errorThrown) {
-      Origin.Notify.alert({
-        type: 'success',
-        text: Origin.l10n.t('app.publishsuccess')
-      });
-    }).fail(function (jqXHR, textStatus, errorThrown) {
-      Origin.Notify.alert({
-        type: 'error',
-        text: jqXHR.responseText
+      $.get('/totaraconnect/publish/' + Origin.editor.data.course.get('_id'), function(jqXHR, textStatus, errorThrown) {
+        $('.editor-sidebar-publish .publishing').addClass('display-none');
+        $('.editor-sidebar-publish .publish').removeClass('display-none');
+        Origin.Notify.alert({
+          type: 'success',
+          text: Origin.l10n.t('app.publishsuccess')
+        });
+      }).fail(function (jqXHR, textStatus, errorThrown) {
+        Origin.Notify.alert({
+          type: 'error',
+          text: jqXHR.responseText
+        });
       });
     });
   }

@@ -1,11 +1,16 @@
 var auth = require('../../lib/auth');
 var fs = require('fs-extra');
+var configuration = require('../../lib/configuration');
 var logger = require('../../lib/logger');
 var origin = require('../../lib/application')();
+var path = require('path');
 var permissions = require('../../lib/permissions');
 var OutputConstants = require('../../lib/outputmanager').Constants;
 
 var Constants = require('./constants');
+var SuccessConsts = Constants.Messages.Success;
+var ErrorConsts = Constants.Messages.Fail;
+var errors = require('./errors');
 var token = require('./token');
 
 module.exports = {
@@ -32,17 +37,18 @@ module.exports = {
       route: `/${Constants.Route}`
     };
     token.authenticate(tokenVal, tokenPermissions, function(error, tokenData) {
-      if(error) {
-        return next(error);
-      }
+      if(error) return next(error);
       req.tokenData = tokenData;
       next();
     });
   },
   memoiseUser: function(req, res, next) {
-    origin.usermanager.retrieveUser({ _id: req.tokenData._id }, { jsonOnly: true }, function(error, user) {
+    origin.usermanager.retrieveUser({ _id: req.tokenData.user }, { jsonOnly: true }, function(error, user) {
       if(error) {
-        return next(error);
+        return next(errors.ServerError(error));
+      }
+      if(!user) {
+        return next(errors.AuthorisationError(ErrorConsts.UserAuth));
       }
       req.user = user;
       next();
@@ -75,7 +81,7 @@ module.exports = {
     auth.getAuthPlugin('local', function(error, plugin) {
       plugin.verifyUser(email, password, function(error, isValid, data) {
         if(!isValid) {
-          return next(new token.AuthorisationError(data.message));
+          return next(new errors.AuthorisationError(data.message));
         }
         origin.usermanager.retrieveUser({ email: email }, function(error, user) {
           _generateTokenDelegate(user);
@@ -85,11 +91,11 @@ module.exports = {
   },
   getTokens: function(req, res, next) {
     if(!req.user) {
-      return next(token.AuthorisationError('Cannot authenticate user'));
+      return next(errors.AuthorisationError(ErrorConsts.UserAuth));
     }
     origin.db.retrieve('token', { user: req.user._id }, function(error, results) {
       if(error) {
-        return next(error);
+        return next(errors.ServerError(error));
       }
       res.status(200).json(_.map(results, function(item) {
         return {
@@ -102,18 +108,18 @@ module.exports = {
   },
   deleteToken: function(req, res, next) {
     if(!req.user) {
-      return next(token.AuthorisationError('Cannot authenticate user'));
+      return next(token.AuthorisationError(ErrorConsts.UserAuth));
     }
     // make sure we only try to delete tokens owned by the request user
     origin.db.destroy('token', { _id: req.params.id, user: req.user._id }, function(error, results) {
       if(error) {
-        return next(error);
+        return next(errors.ServerError(error));
       }
-      res.status(200).end();
+      res.status(200).send(SuccessConsts.TokenRevoke);
     });
   },
   testConnection: function(req, res, next) {
-    res.status(200).send(`Connection successful`);
+    res.status(200).send(SuccessConsts.ConnectionTest);
   },
   getCourses: function(req, res, next) {
     var whitelistedAttributes = [ // NOTE defined like this for readability...
@@ -126,10 +132,9 @@ module.exports = {
       'publishedAt'
     ].join(' ');
     // NOTE we populate the course with the needed data
-    console.log(req.user);
     origin.db.retrieve('publishedcourse', { _tenantId: req.user._tenantId }, { populate: { course: whitelistedAttributes } }, function(error, results) {
       if(error) {
-        return next(error);
+        return next(errors.ServerError(error));
       }
       // return the populated data and add the publish time
       res.status(200).json(_.map(results, function(item) {
@@ -139,39 +144,35 @@ module.exports = {
   },
   publishCourse: function(req, res, next) {
     var courseId = req.params.id;
-    permissions.hasPermission(req.user._id, 'read', permissions.buildResourceString(req.user._tenantId, `/api/course/${courseId}`), function(error, hasPermission) {
-      if(error) return next(error)
-
-      if(!hasPermission) {
-        logger.log('error', `User doesn't have permission to view course ${courseId}`);
-        return res.status(401).end();
+    canViewCourse(req.user, courseId, function(error) {
+      if(error) { // will return error if we don't have permission
+        return next(error);
       }
       origin.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function(error, plugin) {
-        if(error) return next(error);
+        if(error) return next(errors.ServerError(error));
 
         plugin.publish(courseId, OutputConstants.Modes.publish, req, res, function(error, result) {
-          if(error) return next(error);
+          if(error) return next(errors.ServerError(error));
 
           var newDest = result.filename.replace(OutputConstants.Filenames.Download, Constants.Filenames.Publish);
-          fs.copy(result.filename, newDest, { overwrite: true}, function(error) {
-            if(error) return next(error);
+          fs.copy(result.filename, newDest, { overwrite: true }, function(error) {
+            if(error) return next(errors.ServerError(error));
 
             var modelName = 'publishedcourse';
-            var query = {
-              course: courseId
-            };
+            var query = { course: courseId };
             var data = {
               course: courseId,
               _tenantId: req.user._tenantId,
               publishedAt: new Date()
             };
             var _callback = function(error, results) {
-              if(error) return next(error);
-              res.status(200).send('Course published successfully');
+              if(error) return next(errors.ServerError(error));
+              res.status(200).send(SuccessConsts.Publish);
             };
             origin.db.retrieve(modelName, query, function(error, results) {
-              if(error) return next(error);
-
+              if(error) {
+                return next(errors.ServerError(error));
+              }
               if(!results || results.length === 0) {
                 return origin.db.create(modelName, data, _callback);
               }
@@ -183,32 +184,35 @@ module.exports = {
     });
   },
   getScorm: function(req, res, next) {
-    var courseId = req.body.id;
-    if(!courseId) {
-      return next(new Error('No course specified'));
-    }
-    origin.contentmanager.getContentPlugin('course',  function(error, plugin) {
-      plugin.retrieve({ _id: courseId, _isPublished: true }, { jsonOnly: true, tenantId: req.user._tenantId }, function(error, results) {
+    var courseId = req.params.id;
+    canViewCourse(req.user, courseId, function(error) {
+      if(error) { // will return error if we don't have permission
+        return next(error);
+      }
+      origin.db.retrieve('publishedcourse', { course: courseId }, function(error, results) {
         if(error) {
-          return next(error);
+          return next(errors.ServerError(error));
+        }
+        if(results.length === 0) {
+          return next(errors.RequestError(ErrorConsts.UnknownCourse, 404));
         }
         var zipPath = path.join(
           configuration.tempDir,
           configuration.getConfig('masterTenantID'),
-          Constants.Folders.Framework,
-          Constants.Folders.AllCourses,
-          course._tenantId,
-          course._id,
+          OutputConstants.Folders.Framework,
+          OutputConstants.Folders.AllCourses,
+          results[0]._tenantId.toString(),
+          courseId,
           Constants.Filenames.Publish
         );
-        fs.stat(zipPath, function(err, stat) {
-          if(err) {
-            return next(err);
+        fs.stat(zipPath, function(error, stat) {
+          if(error) {
+            return next(errors.ServerError(error));
           }
           res.writeHead(200, {
             'Content-Type': 'application/zip',
             'Content-Length': stat.size,
-            'Content-disposition': 'attachment; filename=' + zipName + '.zip',
+            'Content-disposition': `attachment; filename=${courseId + Constants.Filenames.SCORM}`,
             'Pragma': 'no-cache',
             'Expires': '0'
           });
@@ -216,17 +220,6 @@ module.exports = {
         });
       });
     });
-  },
-  error: function(error, req, res, next) {
-    logger.log('error', 'totaraconnect:', error.name, error.message);
-    switch(error.name) {
-      case 'AuthorisationError':
-        res.status(401).send('Server denied access using provided token');
-        break;
-      default:
-        res.status(500).send('Internal server error');
-        console.log(error.stack);
-    }
   }
 };
 
@@ -239,4 +232,19 @@ function decodeAuthHeader(req) {
     type: header[0],
     token: header[1]
   };
+}
+
+function canViewCourse(user, courseId, cb) {
+  if(!courseId) {
+    return next(errors.RequestError(ErrorConsts.NoCourse));
+  }
+  permissions.hasPermission(user._id, 'read', permissions.buildResourceString(user._tenantId, `/api/course/${courseId}`), function(error, hasPermission) {
+    if(error) {
+      return cb(errors.ServerError(error));
+    }
+    if(!hasPermission) {
+      return cb(errors.AuthorisationError(`${ErrorConsts.CoursePerm}: ${courseId}`));
+    }
+    cb();
+  });
 }
