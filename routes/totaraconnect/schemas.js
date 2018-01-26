@@ -5,13 +5,15 @@ var origin = require('../../lib/application')();
 module.exports = function() {
   addSchema('publishedcourse');
   addSchema('token');
-  // TODO 
-  // origin.contentmanager.addContentHook('destroy', 'course', { when: 'post' }, function(contentType, data, next) {
-  //   origin.db.destroy('publishedcourse', { course: data._id });
-  // });
-  // origin.contentmanager.addContentHook('destroy', 'user', { when: 'post' }, function(contentType, data, next) {
-  //   origin.db.destroy('token', { user: data._id });
-  // });
+
+  // HACK couldn't find what this func was supposed to return, so assumption made about results
+  origin.contentmanager.addContentHook('destroy', 'course', { when: 'pre' }, function(results, next) {
+    origin.db.destroy('publishedcourse', { course: results[0]._id }, next);
+  });
+
+  origin.on('user:delete', function(data) {
+    origin.db.destroy('token', { user: data._id }, next);
+  });
 };
 
 function addSchema(schemaName) {

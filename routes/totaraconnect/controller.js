@@ -148,35 +148,49 @@ module.exports = {
       if(error) { // will return error if we don't have permission
         return next(error);
       }
-      origin.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function(error, plugin) {
-        if(error) return next(errors.ServerError(error));
-
-        plugin.publish(courseId, OutputConstants.Modes.publish, req, res, function(error, result) {
-          if(error) return next(errors.ServerError(error));
-
-          var newDest = result.filename.replace(OutputConstants.Filenames.Download, Constants.Filenames.Publish);
-          fs.copy(result.filename, newDest, { overwrite: true }, function(error) {
+      origin.contentmanager.getContentPlugin('config', function(error, configPlugin) {
+        configPlugin.retrieve({ _courseId: courseId }, { tenantId: req.user._tenantId }, function(error, results) {
+          if(error) {
+            return next(errors.ServerError(error));
+          }
+          if(results.length === 0) {
+            return next(errors.RequestError(ErrorConsts.NoCourse));
+          }
+          var enabledExtensions = results[0]._enabledExtensions;
+          if(!enabledExtensions || !enabledExtensions.spoor) {
+            return next(errors.RequestError(ErrorConsts.NoSpoor));
+          }
+          origin.outputmanager.getOutputPlugin(app.configuration.getConfig('outputPlugin'), function(error, plugin) {
             if(error) return next(errors.ServerError(error));
 
-            var modelName = 'publishedcourse';
-            var query = { course: courseId };
-            var data = {
-              course: courseId,
-              _tenantId: req.user._tenantId,
-              publishedAt: new Date()
-            };
-            var _callback = function(error, results) {
+            plugin.publish(courseId, OutputConstants.Modes.publish, req, res, function(error, result) {
               if(error) return next(errors.ServerError(error));
-              res.status(200).send(SuccessConsts.Publish);
-            };
-            origin.db.retrieve(modelName, query, function(error, results) {
-              if(error) {
-                return next(errors.ServerError(error));
-              }
-              if(!results || results.length === 0) {
-                return origin.db.create(modelName, data, _callback);
-              }
-              origin.db.update(modelName, query, data, _callback);
+
+              var newDest = result.filename.replace(OutputConstants.Filenames.Download, Constants.Filenames.Publish);
+              fs.copy(result.filename, newDest, { overwrite: true }, function(error) {
+                if(error) return next(errors.ServerError(error));
+
+                var modelName = 'publishedcourse';
+                var query = { course: courseId };
+                var data = {
+                  course: courseId,
+                  _tenantId: req.user._tenantId,
+                  publishedAt: new Date()
+                };
+                var _callback = function(error, results) {
+                  if(error) return next(errors.ServerError(error));
+                  res.status(200).send(SuccessConsts.Publish);
+                };
+                origin.db.retrieve(modelName, query, function(error, results) {
+                  if(error) {
+                    return next(errors.ServerError(error));
+                  }
+                  if(!results || results.length === 0) {
+                    return origin.db.create(modelName, data, _callback);
+                  }
+                  origin.db.update(modelName, query, data, _callback);
+                });
+              });
             });
           });
         });

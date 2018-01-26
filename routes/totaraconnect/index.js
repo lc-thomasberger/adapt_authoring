@@ -4,6 +4,9 @@ var permissions = require('../../lib/permissions');
 var router = require('./router');
 var schemas = require('./schemas');
 
+if(origin.configuration.getConfig('jwtSecret') === '') {
+  throw new Error(Constants.Messages.Fail.NoSecret);
+}
 // handles custom schema stuff
 schemas();
 

@@ -9,5 +9,6 @@
   "app.deletetokensuccess": "Token has been revoked.",
   "app.publish": "Publish",
   "app.publishing": "Publishing...",
-  "app.publishsuccess": "Course published successfully.<br/><br/>It will now be available for selection in any linked Totara installs."
+  "app.publishsuccess": "Course published successfully.<br/><br/>It will now be available for selection in any linked Totara installs.",
+  "app.publishdisabled": "SCORM tracking must be enabled before course can be published.<br/><br/>You can do this by adding the <b>Spoor</b> plugin in <b>Manage extensions</b>"
 }

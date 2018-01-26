@@ -15,12 +15,23 @@ define(function(require) {
     var viewEventName = 'editor' + data.type[0].toUpperCase() + data.type.slice(1);
     Origin.once(viewEventName + ':postRender', function() {
       var $btn = $(Handlebars.partials.part_totaraconnectPublishButton());
+      var enabledExtensions = Origin.editor.data.config.get('_enabledExtensions');
+      if(!enabledExtensions || !enabledExtensions.spoor) {
+        $btn.addClass('disabled');
+      }
       $('.editor-common-sidebar-download').after($btn);
       $btn.click(handlePublish);
     });
   });
 
-  function handlePublish() {
+  function handlePublish(event) {
+    $(event.currentTarget).blur();
+    if($(event.currentTarget).hasClass('disabled')) {
+      return Origin.Notify.alert({
+        type: 'error',
+        text: Origin.l10n.t('app.publishdisabled')
+      });
+    }
     if(Origin.editor.isDownloadPending) {
       return;
     }

@@ -13,7 +13,9 @@ module.exports = {
     Fail: {
       UserAuth: "Cannot authenticate user",
       NoCourse: "No course specified",
-      UnknownCourse: "No published courses found with specified ID",
+      NoSecret: "A 'jwtSecret' value needs to be defined in config.json",
+      NoSpoor: "Spoor must be enabled to publish course",
+      UnknownCourse: "No courses found with specified ID",
       CoursePerm: "User doesn't have permission to view course",
       TokenGen: "Failed to generate authorisation token",
       TokenInvalid: "Authorisation token is not valid",

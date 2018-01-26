@@ -125,6 +125,7 @@
     "hbs": "2.4.0",
     "jshint-stylish": "^2.1.0",
     "json-schema-mapper": "0.0.2",
+    "jsonwebtoken": "^8.1.1",
     "junk": "^1.0.2",
     "less": "^2.7.1",
     "log-update": "^2.1.0",
