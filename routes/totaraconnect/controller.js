@@ -122,24 +122,50 @@ module.exports = {
     res.status(200).send(SuccessConsts.ConnectionTest);
   },
   getCourses: function(req, res, next) {
-    var whitelistedAttributes = [ // NOTE defined like this for readability...
+    var whitelistedAttributes = [
       '_id',
       'title',
       'description',
       'tags',
       'createdAt',
-      'updatedAt',
-      'publishedAt'
-    ].join(' ');
+      'updatedAt'
+    ];
     // NOTE we populate the course with the needed data
-    origin.db.retrieve('publishedcourse', { _tenantId: req.user._tenantId }, { populate: { course: whitelistedAttributes } }, function(error, results) {
+    // FIXME there may be a better way to do this...
+    origin.db.retrieve('publishedcourse', { _tenantId: req.user._tenantId }, {}, function(error, results) {
       if(error) {
         return next(errors.ServerError(error));
       }
-      // return the populated data and add the publish time
-      res.status(200).json(_.map(results, function(item) {
-        return _.extend(item.course, { publishedAt: item.publishedAt });
-      }));
+      // object of course _id keys to publishedAt values
+      var publishMap = _.reduce(results, function(memo, doc, index) {
+        memo[doc.course] = doc.publishedAt;
+        return memo;
+      }, {});
+      var courseId = req.query._id;
+      var publishKeys = Object.keys(publishMap);
+
+      if(courseId && publishKeys.indexOf(courseId) === -1) {
+        return next(errors.RequestError(ErrorConsts.CourseUnknown, 403));
+      }
+      origin.contentmanager.getContentPlugin('course', function(error, plugin) {
+        if(error) {
+          return next(errors.ServerError(error));
+        }
+        var query = _.extend({}, query, {
+          _id: (courseId) ? courseId : { $in: publishKeys }
+        });
+        // console.log(`params: ${JSON.stringify(req.query, null, 2)}`);
+        // console.log(`query: ${JSON.stringify(query, null, 2)}}`);
+        plugin.retrieve(query, { tenantId: req.user._tenantId }, function(error, courses) {
+          if(error) {
+            return next(errors.ServerError(error));
+          }
+          // only return the whitelistedAttributes (and the 'publishedAt' date)
+          res.status(200).json(_.map(courses, function(course) {
+            return _.extend({}, _.pick(course, whitelistedAttributes), { publishedAt: publishMap[course._id] });
+          }));
+        });
+      });
     });
   },
   publishCourse: function(req, res, next) {
@@ -208,7 +234,7 @@ module.exports = {
           return next(errors.ServerError(error));
         }
         if(results.length === 0) {
-          return next(errors.RequestError(ErrorConsts.UnknownCourse, 404));
+          return next(errors.RequestError(ErrorConsts.CourseUnknown, 404));
         }
         var zipPath = path.join(
           configuration.tempDir,
