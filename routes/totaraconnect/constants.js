@@ -22,7 +22,8 @@ module.exports = {
       TokenInvalid: "Authorisation token is not valid",
       TokenNoData: "Didn't generate token, no data passed",
       UnexpectedToken: "Expected an authorisation token, received ",
-      PermissionsCheck: "Failed permissions check"
+      PermissionsCheck: "Failed permissions check",
+      InvalidQuery: "Invalid value passed with query for "
     },
     HttpStatuses: {
       400: "Bad client request",

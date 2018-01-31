@@ -130,19 +130,35 @@ module.exports = {
       'createdAt',
       'updatedAt'
     ];
-    // NOTE we populate the course with the needed data
-    // FIXME there may be a better way to do this...
-    origin.db.retrieve('publishedcourse', { _tenantId: req.user._tenantId }, {}, function(error, results) {
+    var tenantId = req.user._tenantId;
+    try {
+      var courseQuery = generateCourseQuery(req.query);
+    } catch(e) {
+      // throws an error if query is invalid
+      return next(errors.RequestError(e));
+    }
+    var publishQuery = {
+      _tenantId: tenantId
+    };
+    if(courseQuery.publishedAt) {
+      publishQuery.publishedAt = courseQuery.publishedAt;
+      delete courseQuery.publishedAt;
+    }
+    origin.db.retrieve('publishedcourse', publishQuery, {}, function(error, results) {
       if(error) {
         return next(errors.ServerError(error));
       }
       // object of course _id keys to publishedAt values
+      var publishKeys = [];
       var publishMap = _.reduce(results, function(memo, doc, index) {
+        publishKeys.push(doc.course);
         memo[doc.course] = doc.publishedAt;
         return memo;
       }, {});
+      // if the query doesn't specify a specific _id, query all published courses
+      if(!courseQuery._id) courseQuery._id = { $in: publishKeys };
+
       var courseId = req.query._id;
-      var publishKeys = Object.keys(publishMap);
 
       if(courseId && publishKeys.indexOf(courseId) === -1) {
         return next(errors.RequestError(ErrorConsts.CourseUnknown, 403));
@@ -151,13 +167,12 @@ module.exports = {
         if(error) {
           return next(errors.ServerError(error));
         }
-        var query = _.extend({}, query, {
-          _id: (courseId) ? courseId : { $in: publishKeys }
-        });
-        // console.log(`params: ${JSON.stringify(req.query, null, 2)}`);
-        // console.log(`query: ${JSON.stringify(query, null, 2)}}`);
-        plugin.retrieve(query, { tenantId: req.user._tenantId }, function(error, courses) {
+        // format the input query so Mongoose can understand it
+        plugin.retrieve(courseQuery, { tenantId: tenantId }, function(error, courses) {
           if(error) {
+            if(error.name === 'CastError') {
+              return next(errors.RequestError(error));
+            }
             return next(errors.ServerError(error));
           }
           // only return the whitelistedAttributes (and the 'publishedAt' date)
@@ -272,6 +287,50 @@ function decodeAuthHeader(req) {
     type: header[0],
     token: header[1]
   };
+}
+
+/**
+* Returns a Mongoose-compatible throws
+* NOTE we make the assumption that the query dates are in the same timezone as
+* the node server
+*/
+function generateCourseQuery(query) {
+  var formatted = {};
+  // NOTE tags are expected as a comma-separated array of tag _ids
+  if(query.tags) {
+    formatted.tags = query.tags.split(',');
+  }
+  // handle dates
+  if(query.createdAt) {
+    var createdAt = new Date(query.createdAt);
+    if(isNaN(createdAt)) {
+      throw new errors.RequestError(ErrorConsts.InvalidQuery + 'createdAt');
+    }
+    formatted.createdAt = createdAt;
+  }
+  if(query.publishedAt) {
+    var publishedAt = new Date(query.publishedAt);
+    if(isNaN(publishedAt)) {
+      throw new errors.RequestError(ErrorConsts.InvalidQuery + 'publishedAt');
+    }
+    formatted.publishedAt = publishedAt;
+  }
+  if(query.publishedBefore) {
+    var publishedBefore = new Date(query.publishedBefore);
+    if(isNaN(publishedBefore)) {
+      throw new errors.RequestError(ErrorConsts.InvalidQuery + 'publishedBefore');
+    }
+    formatted.publishedAt = { '$lt': publishedBefore };
+  }
+  if(query.publishedAfter) {
+    var publishedAfter = new Date(query.publishedAfter);
+    if(isNaN(publishedAfter)) {
+      throw new errors.RequestError(ErrorConsts.InvalidQuery + 'publishedAfter');
+    }
+    formatted.publishedAt = { '$gte': publishedAfter };
+  }
+
+  return formatted
 }
 
 function canViewCourse(user, courseId, cb) {
