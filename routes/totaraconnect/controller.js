@@ -298,7 +298,7 @@ function generateCourseQuery(query) {
   var formatted = {};
 
   if(query.search) {
-    var pattern = new RegExp('.*' + query.search.toLowerCase() + '.*');
+    var pattern = new RegExp(query.search, `i`);
     formatted.$or = [
       { title: pattern },
       { displayTitle: pattern },
