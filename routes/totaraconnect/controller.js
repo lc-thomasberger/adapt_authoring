@@ -296,6 +296,19 @@ function decodeAuthHeader(req) {
 */
 function generateCourseQuery(query) {
   var formatted = {};
+
+  if(query.search) {
+    var pattern = new RegExp('.*' + query.search.toLowerCase() + '.*');
+    formatted.$or = [
+      { title: pattern },
+      { displayTitle: pattern },
+      { description: pattern }
+    ];
+  } else {
+    if(query.title) formatted.title = query.title;
+    if(query.displayTitle) formatted.displayTitle = query.displayTitle;
+    if(query.description) formatted.description = query.description;
+  }
   // NOTE tags are expected as a comma-separated array of tag _ids
   if(query.tags) {
     formatted.tags = query.tags.split(',');
