@@ -624,21 +624,21 @@ function ImportSource(req, done) {
   }
 
   function transformFilterMenu(courseDoc, delta, done) {
-    if(!courseDoc._filterMenu) {
+    if(!courseDoc.menuSettings._filterMenu) {
       return done();
     }
-    delta._filterMenu = _.extend({}, courseDoc._filterMenu);
+    delta.menuSettings = _.extend({}, courseDoc.menuSettings);
 
-    delta._filterMenu._strips.forEach(function(strip) {
+    delta.menuSettings._filterMenu._strips.forEach(function(strip) {
       strip._items.forEach(function(item) {
         if(item._type !== 'contentObject') {
           return;
         }
         var mappedId = metadata.idMap[item._id];
         if(!mappedId) {
-          return console.log(`WARN: transformFilterMenu::no match for ${mappedId}`);
+          return console.log(`WARN: transformFilterMenu::no match for ${mappedId.toString()}`);
         }
-        item._id = mappedId;
+        item._id = mappedId.toString();
       });
     });
     done();
