@@ -624,7 +624,7 @@ function ImportSource(req, done) {
   }
 
   function transformFilterMenu(courseDoc, delta, done) {
-    if(!courseDoc.menuSettings._filterMenu) {
+    if(!courseDoc.menuSettings || !courseDoc.menuSettings._filterMenu) {
       return done();
     }
     delta.menuSettings = _.extend({}, courseDoc.menuSettings);
