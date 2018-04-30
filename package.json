@@ -34,4 +34,8 @@
     "Thomas Taylor <hello@tomtaylor.name>",
     "Nicola Willis <nicola.willis@canstudios.com>"
   ],
+  "dependencies": {
+    "adapt-authoring-core": "git+https://github.com/taylortom/adapt-authoring-core.git",
+    "adapt-authoring-taskrunner": "git+https://github.com/taylortom/adapt-authoring-taskrunner.git"
+  }
 }
