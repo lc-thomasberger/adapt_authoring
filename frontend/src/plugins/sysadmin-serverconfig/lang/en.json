@@ -1,0 +1,4 @@
+{
+  "app.serverconfig": "Server config",
+  "app.serverconfigdesc": "The following config attributes are surfaced by the server:"
+}

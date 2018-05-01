@@ -1,0 +1,8 @@
+{
+  "app.serverlog": "Server log",
+  "app.serverlogdesc": "To filter server log messages by type, use the toggle buttons below.",
+  "app.level": "Level",
+  "app.message": "Message",
+  "app.nologstoshow": "No logs to show.",
+  "app.showalltitle": "Show all"
+}

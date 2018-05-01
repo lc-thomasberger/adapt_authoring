@@ -1,0 +1,19 @@
+<div class="inner">
+  <div class="title">
+    {{t 'app.tagmanager'}}
+  </div>
+  <div class="description">
+    {{t 'app.tagmanagerdesc'}}
+  </div>
+  <div class="tags">
+    {{#if tags.length}}
+    {{else}}
+      {{t 'app.notags'}}
+    {{/if}}
+    {{#each tags.models}}
+      <div class="tag" data-id="{{attributes._id}}">
+        <span>{{attributes.title}}</span>
+      </div>
+    {{/each}}
+  </div>
+</div>

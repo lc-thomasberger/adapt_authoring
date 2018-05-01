@@ -1,0 +1,18 @@
+<div class="inner">
+  <div class="title">
+    {{t 'app.serverconfig'}}
+  </div>
+  <div class="description">
+    {{t 'app.serverconfigdesc'}}
+  </div>
+  <div class="config">
+    {
+    {{#each this}}
+      <div class="attribute">
+        <div class="key">{{@key}}:</div>
+        <div class="value">{{toString this}}</div>
+      </div>
+    {{/each}}
+    }
+  </div>
+</div>

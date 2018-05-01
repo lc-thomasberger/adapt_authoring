@@ -1,0 +1,10 @@
+{
+  "app.tagmanager": "Tag management",
+  "app.tagmanagerdesc": "You can view and modify existing tags below.",
+  "app.tagedittitle": "Edit tag",
+  "app.tageditdesc": "Change the name of the tag, or delete it using the button below.",
+  "app.confirmdeletetag": "Once you delete this tag, you can't go back.",
+  "app.deletetagfail": "Failed to delete tag.<br/><br/>%{error}",
+  "app.tagisempty": "Please enter a value!",
+  "app.notags": "No tags have been added."
+}

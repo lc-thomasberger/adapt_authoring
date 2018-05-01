@@ -1,0 +1,45 @@
+<div class="inner">
+  <div class="title">
+    {{t 'app.serverlog'}}
+  </div>
+  <div class="description">
+    {{t 'app.serverlogdesc'}}
+  </div>
+  <div class="filters">
+    <div class="filter">
+      <button data-type="info">
+        <i class="fa fa-toggle-off {{#ifIn "info" appliedFilters}}fa-toggle-on{{else}}{{/ifIn}}"></i>
+        {{t 'app.infodefaulttitle'}}
+      </button>
+    </div>
+    <div class="filter">
+      <button data-type="warn">
+        <i class="fa fa-toggle-off {{#ifIn "warn" appliedFilters}}fa-toggle-on{{else}}{{/ifIn}}"></i>
+        {{t 'app.warningdefaulttitle'}}
+      </button>
+    </div>
+    <div class="filter">
+      <button data-type="error">
+        <i class="fa fa-toggle-off {{#ifIn "error" appliedFilters}}fa-toggle-on{{else}}{{/ifIn}}"></i>
+        {{t 'app.errordefaulttitle'}}
+      </button>
+    </div>
+  </div>
+  <div class="terminal">
+    <div class="heading row">
+        <div class="level"><h4>{{t 'app.level'}}</h4></div>
+        <div class="message"><h4>{{t 'app.message'}}</h4></div>
+    </div>
+    <div class="logs">
+      {{#each logs.models}}
+        {{#ifIn attributes.level ../appliedFilters}}
+          <div class="log row {{attributes.level}}">
+            <div class="level">{{attributes.level}}</div>
+            <div class="message">{{attributes.message}}</div>
+          </div>
+        {{else}}
+        {{/ifIn}}
+      {{/each}}
+    </div>
+  </div>
+</div>

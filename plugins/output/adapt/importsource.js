@@ -86,6 +86,7 @@ function ImportSource(req, done) {
       async.apply(addAssets, formTags),
       async.apply(cacheMetadata),
       async.apply(importContent, formTags),
+      async.apply(transformContent),
       async.apply(helpers.cleanUpImport, cleanupDirs)
     ], done);
   });
@@ -565,6 +566,82 @@ function ImportSource(req, done) {
         });
       });
     }, cb(null, contentData));
+  }
+
+  function transformContent(done) {
+    app.contentmanager.getContentPlugin('course', function(error, plugin) {
+      if(error) {
+        return done(error);
+      }
+      plugin.retrieve({ _id: courseId }, {}, function(error, results) {
+        if(error) return done(error);
+        if(!results.length) return done();
+
+        var delta = {};
+
+        async.applyEach([
+          transformStartController,
+          transformHeroImage,
+          transformFilterMenu
+        ], results[0], delta, function(error) {
+          if(error) return done(error);
+          if(Object.keys(delta).length === 0) return done();
+          // everything OK, update the DB
+          console.log(JSON.stringify(delta,null,2));
+          plugin.update({ _id: courseId }, delta, done);
+        });
+      });
+    });
+  }
+
+  function transformStartController(courseDoc, delta, done) {
+    var ids = courseDoc._start && courseDoc._start._startIds;
+    if(!ids || !ids.length) {
+      return done();
+    }
+    var newIds = [];
+
+    for(var i = 0, count = ids.length; i < count; i++) {
+      var mappedId = metadata.idMap[ids[i]._id];
+      if(!mappedId) {
+        return console.log(`WARN: transformStartController::no match for ${mappedId}`);
+      }
+      newIds.push(_.extend({}, ids[i], { _id: mappedId }));
+    }
+    delta._start = _.extend({}, courseDoc._start, { _startIds: newIds });
+    done();
+  }
+
+  function transformHeroImage(courseDoc, delta, done) {
+    if(courseDoc.heroImage) {
+      var mappedId = metadata.idMap[courseDoc.heroImage];
+      if(!mappedId) {
+        return console.log(`WARN: transformHeroImage::no match for image ${mappedId}`);
+      }
+      delta.heroImage = mappedId;
+    }
+    done();
+  }
+
+  function transformFilterMenu(courseDoc, delta, done) {
+    if(!courseDoc.menuSettings || !courseDoc.menuSettings._filterMenu) {
+      return done();
+    }
+    delta.menuSettings = _.extend({}, courseDoc.menuSettings);
+
+    delta.menuSettings._filterMenu._strips.forEach(function(strip) {
+      strip._items.forEach(function(item) {
+        if(item._type !== 'contentObject') {
+          return;
+        }
+        var mappedId = metadata.idMap[item._id];
+        if(!mappedId) {
+          return console.log(`WARN: transformFilterMenu::no match for ${mappedId.toString()}`);
+        }
+        item._id = mappedId.toString();
+      });
+    });
+    done();
   }
 }
 
