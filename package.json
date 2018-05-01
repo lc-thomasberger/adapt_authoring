@@ -103,8 +103,8 @@
     "underscore": "~1.8.3",
     "unzip2": "0.2.5",
     "validator": "4.2.1",
-    "winston": "1.0.2",
-    "winston-mongodb": "^4.0.0-rc1",
+    "winston": "2.4.2",
+    "winston-mongodb": "3.0.2",
     "yauzl": "2.8.0"
   },
   "devDependencies": {
