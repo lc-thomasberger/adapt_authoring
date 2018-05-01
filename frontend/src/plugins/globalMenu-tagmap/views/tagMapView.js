@@ -66,7 +66,7 @@ define(function(require) {
       courses.each(function(course) {
         var mTag;
         course.get('tags').forEach(function(tag) {
-          if(this.model.get('moduleTags').indexOf(tag._id)) {
+          if(this.model.get('moduleTags').indexOf(tag._id) > -1) {
             mTag = tag;
             return;
           }
