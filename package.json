@@ -7,6 +7,10 @@
     "adapt",
     "authoring"
   ],
+  "scripts": {
+    "start": "node ./node_modules/adapt-authoring-taskrunner/bin/server.js",
+    "start:dev": "node --inspect ./node_modules/adapt-authoring-taskrunner/bin/server.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adaptlearning/adapt_authoring.git"
