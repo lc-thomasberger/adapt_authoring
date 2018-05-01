@@ -24,23 +24,22 @@ define(function(require) {
 
     preRender: function() {
       this.fetchTags(function() {
-        this.model.get('tags').each(function(tag) {
-          var tagId = tag.get('_id');
-          tag.set('courses', this.model.get('courses').filter(function(course) {
-            return _.some(course.get('tags'), function(tag) { return tag._id === tagId });
-          }));
-        }, this);
-        console.log(this.model.get('tags'));
-        this.render();
+        this.fetchCourses(function() {
+          this.model.get('tags').each(function(tag) {
+            var tagId = tag.get('_id');
+            tag.set('courses', this.model.get('courses').filter(function(course) {
+              return _.some(course.get('tags'), function(tag) { return tag._id === tagId });
+            }));
+          }, this);
+          this.render();
+        });
       });
     },
 
     fetchTags: function(cb) {
       this.model.get('tags').fetch({
         data: { title: { $regex: '^' + TAG_PREFIX } },
-        success: _.bind(function() {
-          this.fetchCourses(cb);
-        }, this)
+        success: _.bind(cb, this)
       });
     },
 
