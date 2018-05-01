@@ -66,10 +66,12 @@ define(function(require) {
       courses.each(function(course) {
         var mTag;
         course.get('tags').forEach(function(tag) {
-          if(this.model.get('moduleTags').indexOf(tag._id) > -1) {
-            mTag = tag;
-            return;
-          }
+          if(mTag) return;
+          this.model.get('moduleTags').forEach(function(moduleTag) {
+            if(moduleTag.get('_id') === tag._id) {
+              return mTag = tag;
+            }
+          }, this);
         }, this);
         course.set('moduleTag', mTag);
       }, this);
