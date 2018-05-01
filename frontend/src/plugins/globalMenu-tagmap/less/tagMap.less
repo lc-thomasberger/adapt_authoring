@@ -4,8 +4,7 @@
 
 .tagmap {
   .form-container-style;
-
-  .title {
+  > .title {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 15px;
@@ -13,16 +12,17 @@
   .description {
     margin-bottom: 20px;
   }
-
-  .tb-heading {
-    padding: 15px 10px;
+  .header {
+    padding: 0 10px;
     border-bottom: 1px solid #a7a7a7;
+    font-weight: bold;
+    color: @primary-color;
   }
-  .tags {
+  .projects {
     .noTags {
       font-style: italic;
     }
-    .tag {
+    .project {
       padding: 10px;
       border-bottom: 1px solid #e4e4e4;
       &:last-child {
