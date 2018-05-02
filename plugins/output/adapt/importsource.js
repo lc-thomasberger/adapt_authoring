@@ -438,8 +438,15 @@ function ImportSource(req, done) {
             var customProps = _.pick(data, _.difference(Object.keys(data), genericPropKeys));
             var extensions = _.pick(customProps, _.intersection(Object.keys(customProps),Object.keys(extensionLocations)));
             customProps = _.omit(customProps, Object.keys(extensions));
-            data.properties = customProps;
-            data._extensions = extensions;
+            Object.assign(data, {
+              properties: customProps,
+              _extensions: extensions,
+              menuSettings: {}
+            });
+            // sever HACK, but export needs fixing
+            if(data._filterMenu) {
+              data.menuSettings._filterMenu = data._filterMenu;
+            }
             data = _.omit(data, Object.keys(customProps));
             cb();
           });
@@ -543,7 +550,7 @@ function ImportSource(req, done) {
       _.findKey(metadata.assetNameMap, function(value, assetId) {
         if (value !== assetBaseName) {
           return;
-        }        
+        }
         app.assetmanager.retrieveAsset({ _id: assetId }, function gotAsset(error, results) {
           if (error) {
             logger.log('error', error);
