@@ -13,19 +13,61 @@ define(function(require) {
     settings: {
       autoRender: false
     },
+    events: {
+      'click button.sort': 'onSortClicked',
+      'click button.tag': 'onTagClicked'
+    },
+    sorts: {
+      date: {
+        regular: function(a, b) {
+          return new Date(a.get('updatedAt')) < new Date(b.get('updatedAt'));
+        },
+        reverse: function(a, b) {
+          return new Date(a.get('updatedAt')) > new Date(b.get('updatedAt'));
+        }
+      },
+      module: {
+        regular: function(a, b) {
+          return a.get('moduleTag').title > b.get('moduleTag').title;
+        },
+        reverse: function(a, b) {
+          return a.get('moduleTag').title < b.get('moduleTag').title;
+        }
+      },
+      project: {
+        regular: function(a, b) {
+          return a.get('projectTag').title > b.get('projectTag').title;
+        },
+        reverse: function(a, b) {
+          return a.get('projectTag').title < b.get('projectTag').title;
+        }
+      },
+      title: {
+        regular: function(a, b) {
+          return a.get('title') > b.get('title');
+        },
+        reverse: function(a, b) {
+          return a.get('title') < b.get('title');
+        }
+      }
+    },
 
     initialize: function(options) {
       this.model = new Backbone.Model({
         tags: new TagCollection(),
-        courses: new ContentCollection(null, { _type: 'course' })
+        courses: new ContentCollection(null, { _type: 'course' }),
+        currentSort: 'module'
       });
+      this.listenTo(Origin, 'tagmap:filter', this.onFilterClicked);
       OriginView.prototype.initialize.apply(this, arguments);
     },
 
     preRender: function() {
       this.fetchTags(function() {
         this.fetchCourses(function() {
-          this.render();
+          // FIXME don't do this twice
+          this.doSort('module');
+          this.doSort('module');
         });
       });
     },
@@ -64,21 +106,17 @@ define(function(require) {
 
     processCourses: function(courses) {
       courses.each(function(course) {
-        var mTag;
+        var pTag, mTag;
         course.get('tags').forEach(function(tag) {
-          if(mTag) return;
+          if(pTag && mTag) return;
+          this.model.get('projectTags').forEach(function(projectTag) {
+            if(projectTag.get('_id') === tag._id) return pTag = tag;
+          }, this);
           this.model.get('moduleTags').forEach(function(moduleTag) {
-            if(moduleTag.get('_id') === tag._id) {
-              return mTag = tag;
-            }
+            if(moduleTag.get('_id') === tag._id) return mTag = tag;
           }, this);
         }, this);
-        course.set('moduleTag', mTag);
-      }, this);
-      this.model.get('projectTags').forEach(function(tag) {
-        tag.set('courses', courses.filter(function(course) {
-          return this.doesCourseHaveTag(course, tag);
-        }, this));
+        course.set({ projectTag: pTag, moduleTag: mTag });
       }, this);
     },
 
@@ -88,7 +126,39 @@ define(function(require) {
         if(courseTag._id === tag.get('_id')) return ret = true;
       });
       return ret;
-    }
+    },
+
+    doSort: function(type) {
+      this.model.get('courses').comparator = this.getSortFunction(type);
+      this.model.get('courses').sort();
+      this.model.set({ currentSort: type, isReverseSort: this.isReverseSort() });
+      this.render();
+    },
+
+    getSortFunction: function(type) {
+      var sort = this.sorts[type];
+      var shouldReverse = this.model.get('currentSort') === type && !this.isReverseSort();
+      return shouldReverse ? sort.reverse : sort.regular;
+    },
+
+    isReverseSort: function() {
+      var sort = this.sorts[this.model.get('currentSort')];
+      return this.model.get('courses').comparator === sort.reverse;
+    },
+
+    onFilterClicked: function(event) {
+      this.$('.filters').toggleClass('hidden');
+    },
+
+    onSortClicked: function(event) {
+      this.doSort($(event.currentTarget).attr('data-id'));
+    },
+
+    onTagClicked: function(event) {
+      var filter = $(event.currentTarget).attr('data-id');
+      this.model.set('tagFilter', (filter === this.model.get('tagFilter')) ? '' : filter);
+      this.render();
+    },
   }, { template: 'tagMap' });
 
   return TagMapView;
