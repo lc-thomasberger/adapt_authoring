@@ -22,40 +22,34 @@ define(function(require) {
         regular: function(a, b) {
           return new Date(a.get('updatedAt')) < new Date(b.get('updatedAt'));
         },
-        reverse: function(a, b) {
-          return new Date(a.get('updatedAt')) > new Date(b.get('updatedAt'));
-        }
+        reverse: function(a, b) { return this.comparators.date.regular(a, b) * -1; }
       },
       module: {
         regular: function(a, b) {
-          return a.get('moduleTag').title > b.get('moduleTag').title;
+          return a.get('moduleTag').title.localeCompare(b.get('moduleTag').title);
         },
-        reverse: function(a, b) {
-          return a.get('moduleTag').title < b.get('moduleTag').title;
-        }
+        reverse: function(a, b) { return this.comparators.module.regular(a, b) * -1; }
       },
       project: {
         regular: function(a, b) {
-          return a.get('projectTag').title > b.get('projectTag').title;
+          return a.get('projectTag').title.localeCompare(b.get('projectTag').title);
         },
-        reverse: function(a, b) {
-          return a.get('projectTag').title < b.get('projectTag').title;
-        }
+        reverse: function(a, b) { return this.comparators.project.regular(a, b) * -1; }
       },
       title: {
         regular: function(a, b) {
-          return a.get('title') > b.get('title');
+          return a.get('title').localeCompare(b.get('title'));
         },
-        reverse: function(a, b) {
-          return a.get('title') < b.get('title');
-        }
+        reverse: function(a, b) { return this.comparators.title.regular(a, b) * -1; }
       }
     },
 
     initialize: function(options) {
+      var courses = new ContentCollection(null, { _type: 'course' });
+      courses.comparators = this.sorts;
       this.model = new Backbone.Model({
         tags: new TagCollection(),
-        courses: new ContentCollection(null, { _type: 'course' }),
+        courses: courses,
         currentSort: 'module'
       });
       this.listenTo(Origin, 'tagmap:filter', this.onFilterClicked);
@@ -136,13 +130,13 @@ define(function(require) {
     },
 
     getSortFunction: function(type) {
-      var sort = this.sorts[type];
+      var sort = this.model.get('courses').comparators[type];
       var shouldReverse = this.model.get('currentSort') === type && !this.isReverseSort();
       return shouldReverse ? sort.reverse : sort.regular;
     },
 
     isReverseSort: function() {
-      var sort = this.sorts[this.model.get('currentSort')];
+      var sort = this.model.get('courses').comparators[this.model.get('currentSort')];
       return this.model.get('courses').comparator === sort.reverse;
     },
 
