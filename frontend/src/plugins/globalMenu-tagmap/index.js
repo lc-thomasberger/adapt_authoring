@@ -2,7 +2,6 @@
 define(function(require) {
   var Origin = require('core/origin');
   var TagMapView = require('./views/tagMapView');
-  var TagMapSidebarView = require('./views/tagMapSidebarView');
 
   Origin.on('origin:dataReady login:changed', function() {
     Origin.globalMenu.addItem({
@@ -19,7 +18,18 @@ define(function(require) {
   });
 
   Origin.on('router:tagmap', function(location, subLocation, action) {
+    Origin.trigger('sidebar:sidebarContainer:hide');
+    Origin.trigger('location:title:update', { title: Origin.l10n.t('app.tagmap') });
+    Origin.options.addItems([{
+      title: Origin.l10n.t('app.filter'),
+      icon: 'filter',
+      callbackEvent: 'tagmap:filter'
+    }]);
     Origin.contentPane.setView(TagMapView);
-    Origin.sidebar.addView(new TagMapSidebarView().$el);
+  });
+
+  Handlebars.registerHelper('tagFilterStatus', function(type, model) {
+    if(model.currentSort !== type) return;
+    return new Handlebars.SafeString('<i class="fa fa-sort-' + (model.isReverseSort ? 'down' : 'up') + '"/>');
   });
 });

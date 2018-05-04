@@ -69,11 +69,10 @@ define(function(require) {
       var group = selectedOption.attr('data-group');
       var callbackEvent = selectedOption.attr('data-callback');
       // If this item is in a group toggle all group items to not selected
-      if(!group || selectedOption.hasClass('selected')) {
-        return;
+      if(group && !selectedOption.hasClass('selected')) {
+        this.$('.options-group-' + group + ' a').removeClass('selected');
+        selectedOption.addClass('selected');
       }
-      this.$('.options-group-' + group + ' a').removeClass('selected');
-      selectedOption.addClass('selected');
       Origin.trigger(callbackEvent);
     },
 
