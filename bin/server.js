@@ -1,7 +1,7 @@
 const { App } = require('adapt-authoring-core');
 
 async function server() {
-  console.log(`taskrunner.server: Running from ${process.cwd()}`);
+  console.log(`Running 'server' from ${process.cwd()}`);
   const app = new App();
   try {
     await app.preload();
