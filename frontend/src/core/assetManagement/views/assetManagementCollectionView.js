@@ -1,189 +1,189 @@
 // LICENCE https://github.com/adaptlearning/adapt_authoring/blob/master/LICENSE
 define(function(require){
-  var Backbone = require('backbone');
-  var Handlebars = require('handlebars');
   var Origin = require('coreJS/app/origin');
   var OriginView = require('coreJS/app/views/originView');
-  var AssetItemView = require('coreJS/assetManagement/views/assetManagementItemView');
-  var AssetModel = require('coreJS/assetManagement/models/assetModel');
-  var AssetManagementPreview = require('coreJS/assetManagement/views/assetManagementPreviewView');
+  var AssetItemView = require('./assetManagementItemView');
 
   var AssetCollectionView = OriginView.extend({
-    tagName: "div",
     className: "asset-management-collection",
 
-    initialize: function(options) {
-      OriginView.prototype.initialize.apply(this, arguments);
-      this.isModal = options.isModal;
-    },
-
-    addListeners: function() {
-      this.listenTo(Origin, 'assetManagement:sidebarFilter:add', this.addFilter);
-      this.listenTo(Origin, 'assetManagement:sidebarFilter:remove', this.removeFilter);
-      this.listenTo(Origin, 'assetManagement:sidebarView:filter', this.filterBySearchInput);
-      this.listenTo(Origin, 'assetManagement:assetManagementSidebarView:filterByTags', this.filterByTags);
-      this.listenTo(Origin, 'assetManagement:collection:refresh', this.updateCollection);
-
-      this.listenTo(this.collection, 'add', this.appendAssetItem);
-      this.listenTo(this.collection, 'sync', this.onCollectionSynced);
-    },
-
-    setDefaults: function(options) {
-      this.sort = { title: 1 };
-      this.search = (options.search || {});
-      // TODO is this likely?
-      this.filters = (this.search.assetType) ? options.search.assetType.$in : [];
-      this.tags = [];
-      // Set to minus so we can have more DRY code
-      this.assetLimit = -32;
-      this.assetDenominator = 32;
-      this.collectionLength = 0;
-
-      this.shouldStopFetches = false;
-    },
+    sort: { createdAt: -1 },
+    search: {},
+    filters: [],
+    tags: [],
+    fetchCount: 0,
+    shouldStopFetches: false,
+    pageSize: 1,
 
     preRender: function(options) {
-      this.setDefaults(options);
-      this.addListeners();
+      if(options.search) {
+        this.search = options.search;
+        var assetType = this.search.assetType;
+        if(assetType) this.filters = assetType.$in;
+      }
+      this.initEventListeners();
+
+      this._doLazyScroll = _.bind(_.throttle(this.doLazyScroll, 250), this);
+      this._onResize = _.bind(_.debounce(this.onResize, 400), this);
     },
 
     postRender: function() {
-      this.setupLazyScrolling();
-      this.setViewToReady();
+      this.initPaging();
+      // init lazy scrolling
+      $('.asset-management-assets-container').on('scroll', this._doLazyScroll);
+      $(window).on('resize', this._onResize);
     },
 
-    resetView: function() {
-      this.shouldStopFetches = false;
-      this.assetLimit = 0;
-      this.collectionLength = 0;
-      this.collection.reset();
+    initEventListeners: function() {
+      this.listenTo(Origin, {
+        'assetManagement:sidebarFilter:add': this.addFilter,
+        'assetManagement:sidebarFilter:remove': this.removeFilter,
+        'assetManagement:sidebarView:filter': this.filterBySearchInput,
+        'assetManagement:assetManagementSidebarView:filterByTags': this.filterByTags,
+        'assetManagement:collection:refresh': this.resetCollection
+      });
+      this.listenTo(this.collection, 'add', this.appendAssetItem);
     },
 
-    setupLazyScrolling: function() {
-      this.removeLazyScrolling();
-      $('.asset-management-assets-container').on('scroll', _.bind(this.onContainerScroll, this));
+    initPaging: function() {
+      this.resetCollection(_.bind(function(collection) {
+        var containerHeight = $('.asset-management-assets-container').outerHeight();
+        var containerWidth = $('.asset-management-assets-container').outerWidth();
+        var itemHeight = $('.asset-management-list-item').outerHeight(true);
+        var itemWidth = $('.asset-management-list-item').outerWidth(true);
+        var columns = Math.floor(containerWidth/itemWidth);
+        var rows = Math.floor(containerHeight/itemHeight);
+        // columns stack nicely, but need to add extra row if it's not a clean split
+        if((containerHeight % itemHeight) > 0) rows++;
+        this.pageSize = columns*rows;
 
-      this.updateCollection(true);
+        // need another reset to get the actual pageSize number of items
+        this.resetCollection(this.setViewToReady);
+      }, this));
     },
 
-    removeLazyScrolling: function() {
-      $('.asset-management-assets-container').off('scroll');
-    },
-
-    lazyRenderCollection: function() {
-      // Adjust limit based upon the denominator
-      this.assetLimit += this.assetDenominator;
-      this.updateCollection(false);
-    },
-
-    appendAssetItem: function(asset) {
-      asset.set('isModal', this.isModal);
+    appendAssetItem: function (asset) {
       this.$('.asset-management-collection-inner').append(new AssetItemView({ model: asset }).$el);
     },
 
+    /**
+    * Collection manipulation
+    */
+
+    fetchCollection: function(cb) {
+      if(this.shouldStopFetches || this.isCollectionFetching) {
+        return;
+      }
+      this.isCollectionFetching = true;
+
+      this.collection.fetch({
+        data: {
+          search: _.extend(this.search, {
+            tags: { $all: this.tags },
+            assetType: { $in: this.filters }
+          }),
+          operators : {
+            skip: this.fetchCount,
+            limit: this.pageSize,
+            sort: this.sort
+          }
+        },
+        success: _.bind(function(collection, response) {
+          this.isCollectionFetching = false;
+          this.fetchCount += response.length;
+          // stop further fetching if this is the last page
+          if(response.length < this.pageSize) this.shouldStopFetches = true;
+
+          $('.asset-management-no-assets').toggleClass('display-none', this.fetchCount > 0);
+
+          Origin.trigger('assetManagement:assetManagementCollection:fetched');
+          if(typeof cb === 'function') cb(collection);
+        }, this),
+        error: function(error) {
+          console.log(error);
+          this.isCollectionFetching = false;
+        }
+      });
+    },
+
+    resetCollection: function(cb, shouldFetch) {
+      // to remove old views
+      Origin.trigger('assetManagement:assetViews:remove');
+
+      this.shouldStopFetches = false;
+      this.fetchCount = 0;
+      this.collection.reset();
+
+      if (shouldFetch === undefined || shouldFetch === true) {
+        this.fetchCollection(cb);
+      }
+    },
+
+    /**
+    * Filtering
+    */
+
+    filterCollection: function() {
+      this.resetCollection(null, false);
+      this.search.assetType = this.filters.length ? { $in: this.filters } : null;
+      this.fetchCollection();
+    },
+
     addFilter: function(filterType) {
-      // add filter to this.filters
       this.filters.push(filterType);
       this.filterCollection();
     },
 
     removeFilter: function(filterType) {
       // remove filter from this.filters
-      this.filters = _.filter(this.filters, function(item) { return item != filterType; });
+      this.filters = _.filter(this.filters, function(item) { return item !== filterType; });
       this.filterCollection();
     },
 
-    filterCollection: function() {
-      this.search.assetType = this.filters.length ? { $in: this.filters } : null;
-      this.updateCollection(true);
-    },
-
-    filterBySearchInput: function(filterText) {
+    filterBySearchInput: function (filterText) {
+      this.resetCollection(null, false);
       var pattern = '.*' + filterText.toLowerCase() + '.*';
       this.search = { title: pattern, description: pattern };
-      this.updateCollection(true);
+      this.fetchCollection();
+
       $(".asset-management-modal-filter-search" ).focus();
     },
 
     filterByTags: function(tags) {
+      this.resetCollection(null, false);
       this.tags = _.pluck(tags, 'id');
-      this.updateCollection(true);
+      this.fetchCollection();
     },
 
-    updateCollection: function(reset) {
-      if (reset) {
-        Origin.trigger('assetManagement:assetViews:remove');
-        this.resetView();
-      }
-      // only show _isDeleted if you're admin... TODO make this more specific
-      if (!Origin.permissions.hasPermissions(["*"])) {
-        this.search = _.extend(this.search, { _isDeleted: false });
-      }
-      this.search = _.extend(this.search, {
-        tags: { $all: this.tags },
-        assetType: { $in: this.filters }
-      });
-      // set when the fetched amount is equal to the collection length
-      if (this.shouldStopFetches) {
+    /**
+    * Event handling
+    */
+
+    onResize: function() {
+      this.initPaging();
+    },
+
+    doLazyScroll: function(e) {
+      if(this.isCollectionFetching) {
         return;
       }
-      this.isCollectionFetching = true;
-
-      this.collection.fetch({
-        remove: reset,
-        data: {
-          search: this.search,
-          operators : {
-            skip: this.assetLimit,
-            limit: this.assetDenominator,
-            sort: this.sort
-          }
-        },
-        success: _.bind(this.onCollectionFetched, this)
-      });
+      var $el = $(e.currentTarget);
+      var scrollableHeight = this.$el.height() - this.$el.height();
+      var pxRemaining = this.$el.height() - ($el.scrollTop() + $el.height());
+      var scrollTriggerAmmount = $('.asset-management-list-item').first().outerHeight()/2;
+      // we're at the bottom, fetch more
+      if (pxRemaining <= scrollTriggerAmmount) this.fetchCollection();
     },
 
-    onCollectionSynced: function() {
-      if (this.collection.length === 0) {
-        $('.asset-management-no-assets').removeClass('display-none');
-      } else {
-        $('.asset-management-no-assets').addClass('display-none');
-      }
-      // HACK for chrome: makes sure the view is scrollable
-      if (this.assetLimit < this.assetDenominator) {
-        $('.asset-management-assets-container').hide();
-        _.delay(function() { $('.asset-management-assets-container').show(); }, 10);
-      }
-    },
+    remove: function() {
+      $('.asset-management-assets-container').off('scroll', this._doLazyScroll);
+      $(window).on('resize', this._onResize);
 
-    onCollectionFetched: function() {
-      // On successful collection fetching set lazy render to enabled
-      if (this.collectionLength === this.collection.length) {
-        this.shouldStopFetches = true;
-      } else {
-        this.shouldStopFetches = false;
-        this.collectionLength = this.collection.length;
-      }
-      this.isCollectionFetching = false;
-      Origin.trigger('assetManagement:assetManagementCollection:fetched', this.collection);
-    },
-
-    onContainerScroll: function() {
-      var $assetContainer = $('.asset-management-assets-container');
-      var $assetContainerInner = $('.asset-management-assets-container-inner');
-      var scrollTop = $assetContainer.scrollTop();
-      var scrollableHeight = $assetContainerInner.height();
-      var containerHeight = $assetContainer.height();
-      // If the scroll position of the assets container is
-      // near the bottom
-      var isAtBottom = (scrollableHeight-containerHeight) - scrollTop < 30;
-      if (isAtBottom && !this.isCollectionFetching) {
-        this.lazyRenderCollection();
-      }
+      OriginView.prototype.remove.apply(this, arguments);
     }
+
   }, {
     template: 'assetManagementCollection'
   });
-
   return AssetCollectionView;
 });
