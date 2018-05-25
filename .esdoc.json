@@ -1,0 +1,33 @@
+{
+  "source": "./",
+  "destination": "./docs",
+  "index": "./DOCS.md",
+  "plugins": [
+    {
+     "name": "esdoc-standard-plugin",
+      "option": {
+        "brand": {
+          "title": "Adapt authoring tool",
+          "author": "Adapt",
+          "site": "https://www.adaptlearning.org/",
+          "image": "https://www.adaptlearning.org/wp-content/uploads/2015/11/home-hero-logo.png"
+        }
+      }
+    },
+    {
+      "name": "esdoc-plugin-transform-html",
+      "option": [
+        {
+          "includes": "*.js",
+          "transforms": ["./.docs-transform.js"]
+        }
+      ]
+    }
+  ],
+  "includes": [
+    "node_modules/adapt-authoring-core/lib",
+    "node_modules/adapt-authoring-server/lib",
+    "node_modules/adapt-authoring-helloworld/lib",
+    "node_modules/adapt-authoring-logger/lib"
+  ]
+}

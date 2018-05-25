@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node ./node_modules/adapt-authoring-taskrunner/bin/server.js",
     "start:dev": "node --inspect ./node_modules/adapt-authoring-taskrunner/bin/server.js"
+    "docs": "./node_modules/.bin/esdoc"
   },
   "repository": {
     "type": "git",
@@ -43,5 +44,9 @@
     "adapt-authoring-server": "git+https://github.com/taylortom/adapt-authoring-server.git",
     "adapt-authoring-helloworld": "git+https://github.com/taylortom/adapt-authoring-helloworld.git",
     "adapt-authoring-logger": "git+https://github.com/taylortom/adapt-authoring-logger.git"
+  },
+  "devDependencies": {
+    "esdoc": "1.1.0",
+    "esdoc-standard-plugin": "1.0.0"
   }
 }
