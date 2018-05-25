@@ -8,8 +8,8 @@
     "authoring"
   ],
   "scripts": {
-    "start": "node ./node_modules/adapt-authoring-taskrunner/bin/server.js",
-    "start:dev": "node --inspect ./node_modules/adapt-authoring-taskrunner/bin/server.js"
+    "start": "node ./bin/start.js",
+    "start:dev": "node --inspect ./bin/start.js",
     "docs": "./node_modules/.bin/esdoc"
   },
   "repository": {
