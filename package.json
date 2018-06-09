@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node ./bin/start.js",
     "start:dev": "node --inspect ./bin/start.js",
-    "docs": "./node_modules/.bin/esdoc"
+    "docs": "node ./bin/docs.js"
   },
   "repository": {
     "type": "git",
@@ -46,7 +46,12 @@
     "adapt-authoring-server": "git+https://github.com/taylortom/adapt-authoring-server.git"
   },
   "devDependencies": {
+    "async": "2.6.1",
     "esdoc": "1.1.0",
-    "esdoc-standard-plugin": "1.0.0"
+    "esdoc-importpath-plugin": "1.0.2",
+    "esdoc-inject-style-plugin": "1.0.0",
+    "esdoc-standard-plugin": "1.0.0",
+    "esdoc-webapp-plugin": "1.0.0",
+    "fs-extra": "6.0.1"
   }
 }
