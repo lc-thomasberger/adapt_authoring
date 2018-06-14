@@ -23,6 +23,7 @@ const esconfig = {
         }
       }
     },
+    { name: "esdoc-node" },
     { name: "./docs/externals-plugin" },
     {
       name: "esdoc-importpath-plugin",
