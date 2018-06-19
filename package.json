@@ -8,9 +8,8 @@
     "authoring"
   ],
   "scripts": {
-    "start": "node ./bin/start.js",
-    "start:dev": "node --inspect ./bin/start.js",
-    "docs": "node ./bin/docs.js"
+    "docs": "node ./bin/docs.js",
+    "start": "node ./bin/start.js"
   },
   "repository": {
     "type": "git",
