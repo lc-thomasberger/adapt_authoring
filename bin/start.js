@@ -4,7 +4,6 @@ async function start() {
   console.log(`Running application from ${process.cwd()}`);
   const app = new App();
   try {
-    await app.initialise();
     await app.preloadDelegate(app);
     await app.bootDelegate(app);
   } catch(e) {
