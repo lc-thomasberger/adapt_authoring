@@ -1,13 +1,14 @@
 const {App} = require('adapt-authoring-core');
 
 async function start() {
+  console.log(`Running application from ${process.cwd()}`);
+  const app = new App();
   try {
-    const app = new App();
     await app.initialise();
     await app.preloadDelegate(app);
     await app.bootDelegate(app);
   } catch(e) {
-    console.log(`Failed to start app: ${e}`);
+    console.log(`Failed to start application: ${e}`);
   }
 }
 
