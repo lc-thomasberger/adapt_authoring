@@ -41,10 +41,10 @@
   "dependencies": {
     "adapt-authoring-core": "git+https://github.com/lc-thomasberger/adapt-authoring-core.git#basicHook",
     "adapt-authoring-helloworld": "git+https://github.com/taylortom/adapt-authoring-helloworld.git",
+    "adapt-authoring-hooktest": "git+https://github.com/lc-thomasberger/adapt-authoring-hooktest.git",
     "adapt-authoring-logger": "git+https://github.com/taylortom/adapt-authoring-logger.git",
     "adapt-authoring-server": "git+https://github.com/taylortom/adapt-authoring-server.git",
-    "adapt-authoring-ui": "git+https://github.com/lc-thomasberger/adapt-authoring-ui.git#basicHook",
-    "adapt-authoring-hooktest": "git+https://github.com/lc-thomasberger/adapt-authoring-hooktest.git"
+    "adapt-authoring-ui": "git+https://github.com/lc-thomasberger/adapt-authoring-ui.git#basicHook"
   },
   "devDependencies": {
     "async": "2.6.1",
