@@ -39,12 +39,12 @@
     "Nicola Willis <nicola.willis@canstudios.com>"
   ],
   "dependencies": {
-    "adapt-authoring-core": "git+https://github.com/taylortom/adapt-authoring-core.git",
+    "adapt-authoring-core": "git+https://github.com/lc-thomasberger/adapt-authoring-core.git#basicHook",
     "adapt-authoring-helloworld": "git+https://github.com/taylortom/adapt-authoring-helloworld.git",
     "adapt-authoring-logger": "git+https://github.com/taylortom/adapt-authoring-logger.git",
     "adapt-authoring-server": "git+https://github.com/taylortom/adapt-authoring-server.git",
-    "adapt-authoring-ui": "git+https://github.com/taylortom/adapt-authoring-ui.git",
-    "adapt-test": "file:../adapt-test"
+    "adapt-authoring-ui": "git+https://github.com/lc-thomasberger/adapt-authoring-ui.git#basicHook",
+    "adapt-authoring-hooktest": "git+https://github.com/lc-thomasberger/adapt-authoring-hooktest.git"
   },
   "devDependencies": {
     "async": "2.6.1",
