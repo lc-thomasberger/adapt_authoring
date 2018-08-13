@@ -43,7 +43,8 @@
     "adapt-authoring-helloworld": "git+https://github.com/taylortom/adapt-authoring-helloworld.git",
     "adapt-authoring-logger": "git+https://github.com/taylortom/adapt-authoring-logger.git",
     "adapt-authoring-server": "git+https://github.com/taylortom/adapt-authoring-server.git",
-    "adapt-authoring-ui": "git+https://github.com/taylortom/adapt-authoring-ui.git"
+    "adapt-authoring-ui": "git+https://github.com/taylortom/adapt-authoring-ui.git",
+    "adapt-test": "file:../adapt-test"
   },
   "devDependencies": {
     "async": "2.6.1",

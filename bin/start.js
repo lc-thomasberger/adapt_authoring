@@ -5,7 +5,10 @@ async function start() {
   const app = new App();
   try {
     await app.preloadDelegate(app);
+    app.emit('app:modulesPreloaded');
+
     await app.bootDelegate(app);
+    app.emit('app:modulesBooted');
   } catch(e) {
     console.log(`Failed to start application: ${e}`);
   }
